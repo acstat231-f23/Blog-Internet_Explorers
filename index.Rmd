@@ -1,7 +1,7 @@
 ---
-title: "Your Project Title Here"
-author: "Your team member names here"
-date: "Add a date"
+title: "Analysing the war's impact on financial markets and trade"
+author: "Ethan Van De Water, Maximo Gonzales, Alex Nichols"
+date: "11/28/23"
 output:
   rmdformats::readthedown:
     highlight: "kate"
@@ -17,6 +17,13 @@ options(knitr.kable.NA = '')
 
 # Load packages
 library(tidyverse)
+library(tidytext)
+library(wordcloud)
+library(textdata)
+library(tidyverse)
+library(rvest)
+library(httr)
+library(stringr)
 
 ```
 

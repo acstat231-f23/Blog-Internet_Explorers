@@ -208,7 +208,7 @@ combined_df <- rbind(JamieDimonCNBCInterview, JPowellSemiAnnualAddress, MichaelB
                      BloombertArticle, BrookingsArticle, DODArticle, CnnArticle, JPMarticle2, GoldmanArticle)|>
   mutate(Word = tolower(Word)) |>#makes everything lowercase
   rename(word = Word)|>
-mutate(word = str_replace_all(word, "[^a-z'-]", "")) #makes it so there's no punctuation included in the dataframe aside from ', -. 
+  mutate(word = str_replace_all(word, "[^a-z'-]", "")) #makes it so there's no punctuation included in the dataframe       aside from ', -. 
   
 words_to_remove <- c("leslie", "picker", "kelly","jamie", "dimon", "portant", "dont", "lot", "im", "stuff") #gets rid of other random words we don't want included
 
