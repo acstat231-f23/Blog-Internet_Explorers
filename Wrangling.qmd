@@ -254,20 +254,16 @@ https://www.cnn.com/2023/10/15/economy/stocks-week-ahead-deglobalization/index.h
 ```{r}
 ##############################Visuals############################################
 
-#could make this one interactive so that you can select the number of words that get shown. 
+#could make this one interactive so that you can select the number of words that get shown. Code is reproducible so we can add as many of the little articles that we want. 
 Visual1Data <- word_counts |>
   filter(count>27)
 
-ggplot(data = Visual1Data, aes(x = fct_reorder(word, count), y = count, color = word, fill = word)) +
+ggplot(data = Visual1Data, aes(x = fct_reorder(word, count), y = count, fill = count)) +
   geom_col() +
-  # Rotate graph
   coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
+  scale_fill_viridis_c() +
+  guides(fill = "none") +
   labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
     x = NULL,
     y = "Number of instances",
     title = "The most common words in the articles")
