@@ -208,9 +208,18 @@ combined_df <- rbind(JamieDimonCNBCInterview, JPowellSemiAnnualAddress, MichaelB
                      BloombertArticle, BrookingsArticle, DODArticle, CnnArticle, JPMarticle2, GoldmanArticle)|>
   mutate(Word = tolower(Word)) |>#makes everything lowercase
   rename(word = Word)|>
-mutate(word = str_replace_all(word, "[^a-z'-]", "")) |>#makes it so there's no punctuation included in the dataframe aside from ', -. 
-  filter(nchar(word)>0) |>#removes the empty strings
-    anti_join(stop_words, by="word")
+mutate(word = str_replace_all(word, "[^a-z'-]", "")) #makes it so there's no punctuation included in the dataframe aside from ', -. 
+  
+words_to_remove <- c("leslie", "picker", "kelly","jamie", "dimon", "portant", "dont", "lot", "im", "stuff") #gets rid of other random words we don't want included
+
+for (wordReplace in words_to_remove) {#uses loop to check if words in combined df are a match from words_to_remove, replaces them with blank strings if they are
+  combined_df <- combined_df %>%
+    mutate(word = str_replace_all(word, wordReplace, ""))
+}
+
+combined_df<- combined_df |>
+    filter(nchar(word)>0) |>#removes the blank strings
+    anti_join(stop_words, by="word") #removes stop words
 
 
 word_counts <- combined_df |> #creates the counts, orders by descending
@@ -242,6 +251,28 @@ https://www.defense.gov/News/News-Stories/Article/Article/3578196/defense-depart
 https://www.cnn.com/2023/10/15/economy/stocks-week-ahead-deglobalization/index.html
 
 
+```{r}
+##############################Visuals############################################
+
+#could make this one interactive so that you can select the number of words that get shown. 
+Visual1Data <- word_counts |>
+  filter(count>27)
+
+ggplot(data = Visual1Data, aes(x = fct_reorder(word, count), y = count, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words in the articles")
+
+```
 
 
 
