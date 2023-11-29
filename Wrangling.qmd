@@ -232,7 +232,7 @@ word_counts <- combined_df |> #creates the counts, orders by descending
 
 
 
-Sources: 
+Sources: (Add as needed)
 
 https://www.cnbc.com/2023/11/03/goldman-says-israel-hamas-war-could-majorly-impact-europes-economy.html
 
