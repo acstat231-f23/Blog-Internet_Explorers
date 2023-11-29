@@ -26,10 +26,15 @@ library(tidytext)
 library(wordcloud)
 library(textdata)
 library(tidyverse)
+library(rvest)
+library(httr)
+library(stringr)
 ```
 
 ```{r}
-#Loading in the .txt files into the environment. 
+##############################.txt files##########################################
+
+#series of articles relating to finance and the israel gaza conflict. Interesting to see what a text analysis produces from this. 
 
 file_path <- "data/JamieDimonCNBCInterview.txt"
 
@@ -39,17 +44,194 @@ JamieDimonCNBCInterview <- read_lines(file_path) %>%
 
 # Separate each paragraph into words and unnest the data frame
 JamieDimonCNBCInterview <- JamieDimonCNBCInterview %>%
-  mutate(Word = str_split(Paragraph, "\\b[A-Za-z0-9_]+\\b")) %>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
   unnest(Word) %>%
   select(Word)
 
- # mutate(Word = str_extract_all(Paragraph, "\\b[A-Za-z0-9_]+\\b")) %>%
+file_path2 <- "data/JpowellSemiAnnualAddress.txt"
 
+JPowellSemiAnnualAddress <- read_lines(file_path2) %>%
+  tibble(Paragraph = .)
+
+JPowellSemiAnnualAddress <- JPowellSemiAnnualAddress %>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path3 <- "data/MichaelBarrTreasuryMarket.txt"
+
+MichaelBarrTreasury <- read_lines(file_path3) %>%
+  tibble(Paragraph = .)
+
+MichaelBarrTreasury <- MichaelBarrTreasury%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path4 <- "data/BloombergWarArticle.txt"
+
+BloombergArticle <- read_lines(file_path4) %>%
+  tibble(Paragraph = .)
+
+BloombergArticle <- BloombergArticle%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path5 <- "data/BrookingsArticle.txt"
+
+BrookingsArticle <- read_lines(file_path5) %>%
+  tibble(Paragraph = .)
+
+BrookingsArticle <- BrookingsArticle%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path6 <- "data/DODArticle.txt"
+
+DODArticle <- read_lines(file_path6) %>%
+  tibble(Paragraph = .)
+
+DODArticle <- DODArticle%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path7 <- "data/CnnArticle.txt"
+
+CnnArticle <- read_lines(file_path7) %>%
+  tibble(Paragraph = .)
+
+CnnArticle <- CnnArticle%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path8 <- "data/JPMarticle2.txt"
+
+JPMarticle2 <- read_lines(file_path8) %>%
+  tibble(Paragraph = .)
+
+JPMarticle2 <- JPMarticle2%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path9 <- "data/NYTArticle.txt"
+
+NYTArticle <- read_lines(file_path9) %>%
+  tibble(Paragraph = .)
+
+NYTArticle <- NYTArticle%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+
+
+
+
+
+##############################Webscrape##########################################
+GoldmanSachsArticle <- "https://www.cnbc.com/2023/11/03/goldman-says-israel-hamas-war-could-majorly-impact-europes-economy.html"
+
+robotstxt::paths_allowed(GoldmanSachsArticle)
+
+htmloutput <- httr::GET(GoldmanSachsArticle)#gets the html content
+
+html_content <- read_html(content(htmloutput, as = "text"))#returns the html content as text
+
+article_text <- html_content %>%
+  html_nodes(".ArticleBody-articleBody p") %>%  # gets the paragraphs from inside the article
+  html_text() %>%
+  str_trim() #gets rid of excess white space
+
+cat(article_text, sep = "\n")#prints the text (for testing purposes)
+
+GoldmanSachsArticle_df <- tibble(Text = article_text)
+
+GoldmanSachsArticle_word_df <- tibble(Word = str_split(article_text, "\\s+") |> unlist())
+
+
+# BloombergArticle <- "https://www.bloomberg.com/news/features/2023-10-12/israel-hamas-war-impact-could-tip-global-economy-into-recession#xj4y7vzkg"
+# 
+# robotstxt::paths_allowed(BloombergArticle)
+# 
+# Bloomberghtmloutput <- httr::GET(BloombergArticle)#gets the html content
+# 
+# Bloomberghtml_content <- read_html(content(Bloomberghtmloutput, as = "text"))#returns the html content as text
+# 
+# article_text <- Bloomberghtml_content %>%
+#   html_nodes("p") %>%  # gets the paragraphs from inside the article
+#   html_text() %>%
+#   str_trim() #gets rid of excess white space
+# 
+# cat(article_text, sep = "\n")#prints the text (for testing purposes)
+# 
+# Bloomberg_df <- tibble(Text = article_text)
+# 
+# Bloomberg_word_df <- tibble(Word = str_split(article_text, "\\s+") |> unlist()) #had issues webscraping, just put into a .txt file. 
+
+# BrookingsArticle <- "https://www.brookings.edu/articles/the-israel-and-gaza-war-economic-repercussions/"
+# 
+# robotstxt::paths_allowed(BrookingsArticle)
+# 
+# response1 <- httr::GET(url)
+# 
+# # Parse the HTML content
+# html_content1 <- read_html(content(response1, as = "text"))
+# 
+# # Extract the text from the article
+# article_text1 <- html_content1 %>%
+#   html_nodes("div.post-content p") %>%
+#   html_text() %>%
+#   str_trim()
+# 
+# cat(article_text1, sep = "\n")#prints the text (for testing purposes)
+# 
+# BrookingsArticle_df <- tibble(Text = article_text1)
+# 
+# BrookingsArticle_word_df <- tibble(Word = str_split(article_text1, "\\s+") |> unlist())
+
+
+
+combined_df <- rbind(JamieDimonCNBCInterview, JPowellSemiAnnualAddress, MichaelBarrTreasury,
+                     BloombertArticle, BrookingsArticle, DODArticle, CnnArticle, JPMarticle2, GoldmanSachsArticle_word_df)|>
+  mutate(Word = tolower(word))
+#|>
+#str_replace_all(tolower(your_data_frame$word), "[^a-z]", "")
+
+
+
+word_counts <- combined_df %>%
+  group_by(Word) %>%
+  summarize(count = n()) |>
+  group_by(count)
 ```
 
 
 
 
 Sources: 
+
+https://www.cnbc.com/2023/11/03/goldman-says-israel-hamas-war-could-majorly-impact-europes-economy.html
+
+https://www.cnbc.com/2023/08/02/cnbc-exclusive-cnbc-transcript-jpmorgan-chase-chairman-ceo-jamie-dimon-speaks-with-cnbcs-leslie-picker-on-power-lunch-today.html
+
+https://www.federalreserve.gov/newsevents/testimony/powell20230621a.htm
+
+https://www.federalreserve.gov/newsevents/speech/barr20231116a.htm
+
+https://www.brookings.edu/articles/the-israel-and-gaza-war-economic-repercussions/
+
+https://www.bloomberg.com/news/features/2023-11-28/evergrande-under-pressure-in-hong-kong-court-to-repay-creditors
+
+https://www.defense.gov/News/News-Stories/Article/Article/3578196/defense-department-continues-to-stress-law-of-war-with-israel/
+
+https://www.cnn.com/2023/10/15/economy/stocks-week-ahead-deglobalization/index.html
+
+
+
 
 
