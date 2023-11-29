@@ -128,30 +128,37 @@ NYTArticle <- NYTArticle%>%
   unnest(Word) %>%
   select(Word)
 
+file_path10 <- "data/GoldmanArticle.txt"
+
+GoldmanArticle <- read_lines(file_path10) %>%
+  tibble(Paragraph = .)
+
+GoldmanArticle <- GoldmanArticle%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
 
 
+##############################Webscrape########################################## really doesn't work well at all
 
-
-
-##############################Webscrape##########################################
-GoldmanSachsArticle <- "https://www.cnbc.com/2023/11/03/goldman-says-israel-hamas-war-could-majorly-impact-europes-economy.html"
-
-robotstxt::paths_allowed(GoldmanSachsArticle)
-
-htmloutput <- httr::GET(GoldmanSachsArticle)#gets the html content
-
-html_content <- read_html(content(htmloutput, as = "text"))#returns the html content as text
-
-article_text <- html_content %>%
-  html_nodes(".ArticleBody-articleBody p") %>%  # gets the paragraphs from inside the article
-  html_text() %>%
-  str_trim() #gets rid of excess white space
-
-cat(article_text, sep = "\n")#prints the text (for testing purposes)
-
-GoldmanSachsArticle_df <- tibble(Text = article_text)
-
-GoldmanSachsArticle_word_df <- tibble(Word = str_split(article_text, "\\s+") |> unlist())
+# GoldmanSachsArticle <- "https://www.cnbc.com/2023/11/03/goldman-says-israel-hamas-war-could-majorly-impact-europes-economy.html"
+# 
+# robotstxt::paths_allowed(GoldmanSachsArticle)
+# 
+# htmloutput <- httr::GET(GoldmanSachsArticle)#gets the html content
+# 
+# html_content <- read_html(content(htmloutput, as = "text"))#returns the html content as text
+# 
+# article_text <- html_content %>%
+#   html_nodes(".ArticleBody-articleBody p") %>%  # gets the paragraphs from inside the article
+#   html_text() %>%
+#   str_trim() #gets rid of excess white space
+# 
+# cat(article_text, sep = "\n")#prints the text (for testing purposes)
+# 
+# GoldmanSachsArticle_df <- tibble(Text = article_text)
+# 
+# GoldmanSachsArticle_word_df <- tibble(Word = str_split(article_text, "\\s+")|> unlist() )
 
 
 # BloombergArticle <- "https://www.bloomberg.com/news/features/2023-10-12/israel-hamas-war-impact-could-tip-global-economy-into-recession#xj4y7vzkg"
@@ -195,19 +202,22 @@ GoldmanSachsArticle_word_df <- tibble(Word = str_split(article_text, "\\s+") |> 
 # BrookingsArticle_word_df <- tibble(Word = str_split(article_text1, "\\s+") |> unlist())
 
 
+ data(stop_words)
 
 combined_df <- rbind(JamieDimonCNBCInterview, JPowellSemiAnnualAddress, MichaelBarrTreasury,
-                     BloombertArticle, BrookingsArticle, DODArticle, CnnArticle, JPMarticle2, GoldmanSachsArticle_word_df)|>
-  mutate(Word = tolower(word))
-#|>
-#str_replace_all(tolower(your_data_frame$word), "[^a-z]", "")
+                     BloombertArticle, BrookingsArticle, DODArticle, CnnArticle, JPMarticle2, GoldmanArticle)|>
+  mutate(Word = tolower(Word)) |>#makes everything lowercase
+  rename(word = Word)|>
+mutate(word = str_replace_all(word, "[^a-z'-]", "")) |>#makes it so there's no punctuation included in the dataframe aside from ', -. 
+  filter(nchar(word)>0) |>#removes the empty strings
+    anti_join(stop_words, by="word")
 
 
-
-word_counts <- combined_df %>%
-  group_by(Word) %>%
+word_counts <- combined_df |> #creates the counts, orders by descending
+  group_by(word) |>
   summarize(count = n()) |>
-  group_by(count)
+  group_by(count) |>
+  arrange(desc(count))
 ```
 
 
