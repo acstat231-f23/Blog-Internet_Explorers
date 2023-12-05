@@ -1,5 +1,5 @@
 ---
-title: "Analysing the impact of war on financial markets and trade"
+title: "Analysing the Impact of War on Financial Markets and Trade"
 author: "Ethan Van De Water, Maximo Gonzales, Alex Nichols"
 date: "11/28/23"
 output:
@@ -24,19 +24,14 @@ library(tidyverse)
 library(rvest)
 library(httr)
 library(stringr)
+library(plotly)
+library(dplyr)
+library(ggplot2)
 ```
 
 # Intro
 
 The purpose of this blog is to analyze what institutions believe to be the most impactful effects of war, and inspect those arguments using supporting data and visualizations from a variety of sources. 
-
-## Website publication work flow
-
-1. Edit Rmd
-
-2. Knit to HTML to view progress. You may need to click "Open in Browser" for some content to show (sometimes content won't show until you actually push your changes to GitHub and view the published website).
-
-3. Commit and push changes when you are ready. The website may take a couple minutes to update automatically after the push, but you may need to clear your browser's cache or view the page in a private/incognito window to see the changes more quickly. 
 
 
 # Content
@@ -44,13 +39,13 @@ The purpose of this blog is to analyze what institutions believe to be the most 
 You can include text, `code`, and output as usual. Remember to take full advantage of Markdown and follow our [Style Guide](https://acstat231-f22.github.io/home/style-guide.html#Text_narration).
 
 ```{r ggplot-example, fig.align="left", out.width="100%"}
-ggplot(data = cars, aes(x = speed, y = dist)) + 
-  geom_point() + 
-  labs(x = "Speed of car (mph)",
-       y = "Distance taken to stop (ft)",
-       title = "Stopping distance increases with faster speeds",
-       subtitle = "Based on 1920s study") +
-  theme_classic()
+# ggplot(data = cars, aes(x = speed, y = dist)) + 
+#   geom_point() + 
+#   labs(x = "Speed of car (mph)",
+#        y = "Distance taken to stop (ft)",
+#        title = "Stopping distance increases with faster speeds",
+#        subtitle = "Based on 1920s study") +
+#   theme_classic()
 ```
 
 
@@ -204,13 +199,14 @@ ggplot(data = Visual1Data, aes(x = fct_reorder(word, count), y = count, fill = c
   labs(
     x = NULL,
     y = "Number of instances",
-    title = "The Most Common Words in Documents Relating to War and Economics")
+    title = "The Most Common Words in Documents Relating to War and Economics")+
+  theme_minimal()
 
 
 
 
 ```
-We selected a series of articles from different institutions (Banks, Government, News & Media) that had titles relating to current international conflicts and economic sentiment. This word frequency analysis helped us decide where we should target our further analysis to explore the impact that war has on the global macro environment. Among this list, Oil, prices, and inflation were of great interest. 
+We selected a series of articles from different institutions (Banks, Government, News & Media) that had titles relating to current international conflicts and economic sentiment. This word frequency analysis helped us decide where we should target our further analysis to explore the impact that war has on the global macro environment. Among this list: Oil, prices, and inflation were of great interest. 
 
 (sources listed below)
 
@@ -219,6 +215,82 @@ knitr::include_graphics("img/Jpowellspeech.webp")
 #Photo of Jerome Powell giving a speech
 ```
 Jerome Powell speaks on Raising the benchmark Fed Funds Rate
+
+## Visualization 2
+
+```{r}
+file_path <- "data/CPIdata.csv"
+
+# Read CSV data into a data frame
+cpi_dataset <- read.csv(file_path)
+
+month_renaming<- c(
+  M01 = "January",
+  M02 = "February",
+  M03 = "March",
+  M04 = "April",
+  M05 = "May",
+  M06 = "June",
+  M07 = "July",
+  M08 = "August",
+  M09 = "September",
+  M10 = "October",
+  M11 = "November",
+  M12 = "December"
+)
+
+month_mapping <- c(
+  "January" = 1,
+  "February" = 2,
+  "March" = 3,
+  "April" = 4,
+  "May" = 5,
+  "June" = 6,
+  "July" = 7,
+  "August" = 8,
+  "September" = 9,
+  "October" = 10,
+  "November" = 11,
+  "December" = 12
+)
+
+
+cpi_dataset <- cpi_dataset %>%
+  mutate(Month = month_renaming[Period]) |> #create month column
+   mutate(Month = match(Month, names(month_mapping)), #create date column with month column
+         Date = as.Date(paste(Year, Month, "01", sep = "-"), format = "%Y-%m-%d"))
+
+
+# ggplot(cpi_dataset, aes(x = Date, y = Value)) +
+#   geom_line() +
+#   labs(title = "CPI Chart", x = "Date", y = "CPI") +
+#   theme_minimal()
+
+CPIplot <- ggplot(cpi_dataset, aes(x = Date, y = Value)) +
+  geom_point()+
+  geom_line() +
+  labs(title = "CPI From 2017-Present", x = "Date", y = "CPI") +
+  theme_minimal() + 
+  geom_vline(xintercept = as.Date("2022-02-01"), linetype = "dashed", color = "red") +
+  geom_vline(xintercept = as.Date("2023-10-01"), linetype = "dashed", color = "blue") +
+  geom_text(data = cpi_dataset %>% filter(Date == as.Date("2022-02-01")), 
+            aes(x = as.Date("2022-02-01"), y = Value, label = "Russia Invades Ukraine"),
+            vjust = -0.5, color = "red") +
+  geom_text(data = cpi_dataset %>% filter(Date == as.Date("2023-10-01")), 
+            aes(x = as.Date("2023-10-01"), y = Value, label = "Israel/Gaza"),
+            vjust = -0.5, color = "blue")
+
+# Convert ggplot to plotly
+plotly_object <- ggplotly(CPIplot)
+
+# Display the interactive plot
+plotly_object
+
+
+```
+
+CPI (Consumer Price Index) is the average price paid by a consumer for a "basket" of consumer goods. Here, we are looking at the CPI for a U.S. consumer from 2017-2022. CPI is also used as an indicator for inflation. The purpose of this plot is to provide some context for the further analysis that will be performed. The CPI has increased steadily over time, but we are interested in seeing if in recent years, global conflicts were drivers of that increase. 
+
 
 
 
