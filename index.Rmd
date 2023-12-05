@@ -49,7 +49,7 @@ You can include text, `code`, and output as usual. Remember to take full advanta
 ```
 
 
-```{r}
+```{r fig.align="left", out.width="100%"}
 
 
 #Load Data
@@ -187,7 +187,7 @@ word_counts <- combined_df |> #creates the counts, orders by descending
 ```
 
 ## Visualization 1
-```{r}
+```{r fig.align="left", out.width="100%"}
 Visual1Data <- word_counts |>
   filter(count>25)
 
@@ -214,7 +214,7 @@ We selected a series of articles from different institutions (Banks, Government,
 knitr::include_graphics("img/Jpowellspeech.webp")
 #Photo of Jerome Powell giving a speech
 ```
-Jerome Powell speaks on Raising the benchmark Fed Funds Rate
+[Jerome Powell](https://www.federalreservehistory.org/people/jerome-h-powell) speaks on Raising the benchmark Fed Funds Rate
 
 ## Visualization 2
 
@@ -289,7 +289,31 @@ plotly_object
 
 ```
 
-CPI (Consumer Price Index) is the average price paid by a consumer for a "basket" of consumer goods. Here, we are looking at the CPI for a U.S. consumer from 2017-2022. CPI is also used as an indicator for inflation. The purpose of this plot is to provide some context for the further analysis that will be performed. The CPI has increased steadily over time, but we are interested in seeing if in recent years, global conflicts were drivers of that increase. 
+[CPI](https://www.bls.gov/cpi/) (Consumer Price Index) is the average price paid by a consumer for a "basket" of consumer goods. Here, we are looking at the CPI for a U.S. consumer from 2017-2022. CPI is also used as an indicator for inflation. The purpose of this plot is to provide some context for the further analysis that will be performed. The CPI has increased steadily over time, but we are interested in seeing if in recent years, global conflicts were drivers of that increase. 
+
+
+## Further Exploration {.tabset}
+
+Uses subsection syntax to get the tabs. Looks cool I think
+
+### Oil (Interactive Visuzlization)
+
+You can make a bulleted list like this:
+
+* item 1
+* item 2
+* item 3
+
+
+### Trade (Network)
+
+
+You can make a numbered list like this
+
+1. First thing I want to say
+2. Second thing I want to say
+3. Third thing I want to say
+
 
 
 
@@ -571,6 +595,12 @@ Smith, Elliot. “Goldman Sachs Says the Israel-Hamas War Could Have Major Impli
 “Speech by Vice Chair for Supervision Barr on Financial Stability.” Board of Governors of the Federal Reserve System, www.federalreserve.gov/newsevents/speech/barr20231116a.htm. Accessed 5 Dec. 2023. 
 
 Rappeport, Alan, and Patricia Cohen. “Fragile Global Economy Faces New Crisis in Israel-Gaza War.” The New York Times, The New York Times, 10 Oct. 2023, www.nytimes.com/2023/10/10/business/economy/global-economy-israel-gaza-war.html. 
+
+Data Sources: 
+
+“CPI Home.” U.S. Bureau of Labor Statistics, U.S. Bureau of Labor Statistics, www.bls.gov/cpi/. Accessed 5 Dec. 2023. 
+
+
 
 
   
