@@ -24,7 +24,6 @@ library(tidyverse)
 library(rvest)
 library(httr)
 library(stringr)
-
 ```
 
 # Intro
@@ -283,7 +282,7 @@ Further customization requires adding a CSS style file or code chunk or incorpor
 
 All data sources, any key R packages, and any other sources used in developing your blog should be cited in full in a list of references at the end of your blog. Your blog post should also link to these sources as they are discussed. You may choose any reference style as long as sources are fully cited (try to be consistent!).
 
-Typically, references in R Markdown (and LaTeX) files are [incorporated with a BibTeX database](https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html) (a .bib file). You can try this approach or manually include either a numbered or alphabetized list. 
+Typically, references in R Markdown (and LaTeX) files are [incorporated with a BibTeX database](https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html) (a .bib file). You can try this approach or  manually include either a numbered or alphabetized list. 
 
 Columbia University has compiled some guidance on [how to cite data](https://guides.library.columbia.edu/datacitation). Some data sources will give you the citation information to copy and paste. Use the provided citations or citation styles in those cases.
 
@@ -312,6 +311,32 @@ Shah, Syed A. A. (October 2022), "Starbucks Drinks" (Version 1), *Kaggle*, avail
 
 <!-- R package -->
 Xie Y, Cheng J, Tan X (2022). "DT: A Wrapper of the JavaScript Library 'DataTables'," R package version 0.24, available at <https://CRAN.R-project.org/package=DT>.
+
+
+
+Article Sources:
+
+Ma, Dorothy, and Alice Huang. “Evergrande under Pressure in Hong Kong Court to Repay Creditors.” Bloomberg.Com, Bloomberg, 28 Nov. 2023, www.bloomberg.com/news/features/2023-11-28/evergrande-under-pressure-in-hong-kong-court-to-repay-creditors. 
+
+Jeffrey Feltman, Sharan Grewal, et al. “The Israel and Gaza War: Economic Repercussions.” Brookings, 24 Oct. 2023, www.brookings.edu/articles/the-israel-and-gaza-war-economic-repercussions/. 
+
+Mena, Bryan. “Israel-Hamas War Risks Further Deglobalization and Inflation | CNN Business.” CNN, Cable News Network, 15 Oct. 2023, www.cnn.com/2023/10/15/economy/stocks-week-ahead-deglobalization/index.html. 
+
+“Defense Department Continues to Stress Law of War with Israel.” U.S. Department of Defense, www.defense.gov/News/News-Stories/Article/Article/3578196/defense-department-continues-to-stress-law-of-war-with-israel/. Accessed 5 Dec. 2023. 
+
+Smith, Elliot. “Goldman Sachs Says the Israel-Hamas War Could Have Major Implications for Europe’s Economy.” CNBC, CNBC, 7 Nov. 2023, www.cnbc.com/2023/11/03/goldman-says-israel-hamas-war-could-majorly-impact-europes-economy.html. 
+
+“CNBC Exclusive: CNBC TRANSCRIPT: JPMorgan Chase Chairman &amp; CEO Jamie Dimon Speaks with CNBC’s Leslie Picker on ‘Power Lunch’ Today.” CNBC, CNBC, 2 Aug. 2023, www.cnbc.com/2023/08/02/cnbc-exclusive-cnbc-transcript-jpmorgan-chase-chairman-ceo-jamie-dimon-speaks-with-cnbcs-leslie-picker-on-power-lunch-today.html. 
+
+“2023 Economic Outlook: Insights &amp; Trends [Midyear Update].” 2023 Economic Outlook: Insights &amp; Trends [Midyear Update], J.P. Morgan Chase, 8 Dec. 2022, www.jpmorgan.com/insights/outlook/economic-outlook/economic-trends. 
+
+“Testimony by Chair Powell on the Semiannual Monetary Policy Report to the Congress.” Board of Governors of the Federal Reserve System, www.federalreserve.gov/newsevents/testimony/powell20230621a.htm. Accessed 5 Dec. 2023. 
+
+“Speech by Vice Chair for Supervision Barr on Financial Stability.” Board of Governors of the Federal Reserve System, www.federalreserve.gov/newsevents/speech/barr20231116a.htm. Accessed 5 Dec. 2023. 
+
+Rappeport, Alan, and Patricia Cohen. “Fragile Global Economy Faces New Crisis in Israel-Gaza War.” The New York Times, The New York Times, 10 Oct. 2023, www.nytimes.com/2023/10/10/business/economy/global-economy-israel-gaza-war.html. 
+
+
   
 
 

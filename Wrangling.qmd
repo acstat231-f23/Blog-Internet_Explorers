@@ -206,7 +206,7 @@ GoldmanArticle <- GoldmanArticle%>%
  data(stop_words)
 
 combined_df <- rbind(JamieDimonCNBCInterview, JPowellSemiAnnualAddress, MichaelBarrTreasury,
-                     BloombertArticle, BrookingsArticle, DODArticle, CnnArticle, JPMarticle2, GoldmanArticle)|>
+                     BloombergArticle, BrookingsArticle, DODArticle, CnnArticle, JPMarticle2, GoldmanArticle)|>
   mutate(Word = tolower(Word)) |>#makes everything lowercase
   rename(word = Word)|>
   mutate(word = str_replace_all(word, "[^a-z'-]", "")) #makes it so there's no punctuation included in the dataframe       aside from ', -. 
@@ -250,6 +250,8 @@ https://www.bloomberg.com/news/features/2023-11-28/evergrande-under-pressure-in-
 https://www.defense.gov/News/News-Stories/Article/Article/3578196/defense-department-continues-to-stress-law-of-war-with-israel/
 
 https://www.cnn.com/2023/10/15/economy/stocks-week-ahead-deglobalization/index.html
+
+
 
 
 ```{r}
