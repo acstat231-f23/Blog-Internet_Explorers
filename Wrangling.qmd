@@ -29,6 +29,7 @@ library(tidyverse)
 library(rvest)
 library(httr)
 library(stringr)
+library(jsonlite)
 ```
 
 ```{r}
@@ -271,4 +272,49 @@ ggplot(data = Visual1Data, aes(x = fct_reorder(word, count), y = count, fill = c
 ```
 
 
+```{r} 
+
+api_key <- "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"
+
+api_url <- "https://api.openai.com/v1/chat/completions"
+
+send_prompt <- function(prompt) {
+  body <- list(
+    model = "gpt-3.5-turbo-1106",
+    messages = list(
+      list(role = "user", content = prompt)
+    ),
+    max_tokens = 150,  # Adjust as needed
+    temperature = 0.2  # Adjust for creativity (0.0-1.0)
+  )
+  
+  response <- POST(
+    url = api_url,
+    add_headers(`Authorization` = paste("Bearer", api_key)),
+    content_type_json(),
+    body = toJSON(body, auto_unbox = TRUE)
+  )
+  print(3)
+  if (http_status(response)$category == "success") {
+    result <- fromJSON(content(response, "text"))
+    print(1)
+    # Extract the content of the assistant's message
+    if (length(result$choices) > 0 && length(result$choices[[1]]$message) > 0) {
+      print(result$choices$message$content)
+      return(result$choices$message$content)
+    } else {
+      return("No response generated.")
+    }
+  } else {
+    cat("Error in API request: ", content(response, "text"), "\n")
+    stop()
+  }
+}
+print(2)
+prompt_response <- send_prompt("write me a 4 line Frost Poem")
+print(prompt_response)
+
+
+
+```
 
