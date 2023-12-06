@@ -1,6 +1,6 @@
 ---
 title: "Analysing the Impact of War on Financial Markets and Trade"
-author: "Ethan Van De Water, Maximo Gonzales, Alex Nichols"
+author: "Ethan Van De Water, Maximo Gonzalezß, Alex Nichols"
 date: "11/28/23"
 output:
  # rmdformats::readthedown:
