@@ -1,0 +1,58 @@
+---
+title: "STAT 231 PUG Shiny Project"
+author: "Ethan Van De Water, Maximo Gonzalez, Alex Nichols"
+date: "2023-10-17"
+format: pdf
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(eval = TRUE, message = FALSE)
+
+# improve digit and NA display 
+options(scipen = 1, knitr.kable.NA = '')
+
+# Load Packages
+library(tidyverse)
+library(kableExtra)
+library(lubridate)
+library(ggplot2)
+library(readxl)
+library(dplyr)
+library(rvest)
+library(purrr)
+library(robotstxt)
+library(readxl)
+```
+
+\newpage
+# Data Wrangling
+
+
+```{r}
+
+######Dataset1-Ethan######################################
+gdp_import <- read_excel("data/GDP_data.XLSX")
+
+gdp_wrangled1 <- gdp_import %>%
+  select(country, year, gdp_pc_usd)
+
+# Calculate the average che for each country and time period
+gdp_wrangled2 <- gdp_wrangled1 %>%
+  group_by(country) %>%
+  summarize(
+    avg_gdp = mean(gdp_pc_usd[year >= 2000 & year <= 2019])
+  ) %>%
+  ungroup()
+
+
+#Joining based on country to see what we have thus far
+
+result <- inner_join(df4, covid_deaths2, by = "country") |>
+          left_join(che_wrangled3, by = "country") |>
+          left_join(gdp_wrangled2, by = "country")
+
+saveRDS(result, file = "Application/data/result.Rds")#Save Resulting Dataset
+
+```
+
+
