@@ -1,6 +1,6 @@
 ---
 title: "Analysing the Impact of War on Financial Markets and Trade"
-author: "Ethan Van De Water, Maximo Gonzales, Alex Nichols"
+author: "Ethan Van De Water, Maximo Gonzalezß, Alex Nichols"
 date: "11/28/23"
 output:
  # rmdformats::readthedown:
@@ -177,14 +177,11 @@ combined_df<- combined_df |>
     filter(nchar(word)>0) |>#removes the blank strings
     anti_join(stop_words, by="word") #removes stop words
 
-
 word_counts <- combined_df |> #creates the counts, orders by descending
   group_by(word) |>
   summarize(count = n()) |>
   group_by(count) |>
   arrange(desc(count))
-
-
 ```
 
 ## Visualization 1
