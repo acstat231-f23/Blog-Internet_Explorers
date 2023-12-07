@@ -30,6 +30,7 @@ library(rvest)
 library(httr)
 library(stringr)
 library(jsonlite)
+library(readxl)
 ```
 
 ```{r}
@@ -319,4 +320,49 @@ print(prompt_response)
 
 
 ```
+
+
+```{r}
+#Wrangling the imports and exports data for the oil network. 
+
+file_path_imports <- "data/CrudeOilImports.xlsx"
+
+file_path_exports <- "data/CrudeOilExports.xlsx"
+
+OilImports <- read_excel(file_path_imports)
+OilExports <- read_excel(file_path_exports)
+
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
