@@ -31,6 +31,8 @@ library(httr)
 library(stringr)
 library(jsonlite)
 library(readxl)
+library(tm)
+
 ```
 
 ```{r}
@@ -41,71 +43,71 @@ library(readxl)
 file_path <- "data/JamieDimonCNBCInterview.txt"
 
 # Read the text file into a data frame with one column named "Paragraph"
-JamieDimonCNBCInterview <- read_lines(file_path) %>%
+JamieDimonCNBCInterview1 <- read_lines(file_path) %>%
   tibble(Paragraph = .)
 
 # Separate each paragraph into words and unnest the data frame
-JamieDimonCNBCInterview <- JamieDimonCNBCInterview %>%
+JamieDimonCNBCInterview <- JamieDimonCNBCInterview1 %>%
   mutate(Word = str_split(Paragraph, "\\s+")) %>%
   unnest(Word) %>%
   select(Word)
 
 file_path2 <- "data/JpowellSemiAnnualAddress.txt"
 
-JPowellSemiAnnualAddress <- read_lines(file_path2) %>%
+JPowellSemiAnnualAddress1 <- read_lines(file_path2) %>%
   tibble(Paragraph = .)
 
-JPowellSemiAnnualAddress <- JPowellSemiAnnualAddress %>%
+JPowellSemiAnnualAddress <- JPowellSemiAnnualAddress1 %>%
   mutate(Word = str_split(Paragraph, "\\s+")) %>%
   unnest(Word) %>%
   select(Word)
 
 file_path3 <- "data/MichaelBarrTreasuryMarket.txt"
 
-MichaelBarrTreasury <- read_lines(file_path3) %>%
+MichaelBarrTreasury1 <- read_lines(file_path3) %>%
   tibble(Paragraph = .)
 
-MichaelBarrTreasury <- MichaelBarrTreasury%>%
+MichaelBarrTreasury <- MichaelBarrTreasury1%>%
   mutate(Word = str_split(Paragraph, "\\s+")) %>%
   unnest(Word) %>%
   select(Word)
 
 file_path4 <- "data/BloombergWarArticle.txt"
 
-BloombergArticle <- read_lines(file_path4) %>%
+BloombergArticle1 <- read_lines(file_path4) %>%
   tibble(Paragraph = .)
 
-BloombergArticle <- BloombergArticle%>%
+BloombergArticle <- BloombergArticle1%>%
   mutate(Word = str_split(Paragraph, "\\s+")) %>%
   unnest(Word) %>%
   select(Word)
 
 file_path5 <- "data/BrookingsArticle.txt"
 
-BrookingsArticle <- read_lines(file_path5) %>%
+BrookingsArticle1 <- read_lines(file_path5) %>%
   tibble(Paragraph = .)
 
-BrookingsArticle <- BrookingsArticle%>%
+BrookingsArticle <- BrookingsArticle1%>%
   mutate(Word = str_split(Paragraph, "\\s+")) %>%
   unnest(Word) %>%
   select(Word)
 
 file_path6 <- "data/DODArticle.txt"
 
-DODArticle <- read_lines(file_path6) %>%
+DODArticle1 <- read_lines(file_path6) %>%
   tibble(Paragraph = .)
 
-DODArticle <- DODArticle%>%
+DODArticle <- DODArticle1%>%
   mutate(Word = str_split(Paragraph, "\\s+")) %>%
   unnest(Word) %>%
   select(Word)
 
 file_path7 <- "data/CnnArticle.txt"
 
-CnnArticle <- read_lines(file_path7) %>%
+CnnArticle1 <- read_lines(file_path7) %>%
   tibble(Paragraph = .)
 
-CnnArticle <- CnnArticle%>%
+CnnArticle <- CnnArticle1%>%
   mutate(Word = str_split(Paragraph, "\\s+")) %>%
   unnest(Word) %>%
   select(Word)
@@ -122,20 +124,20 @@ JPMarticle2 <- JPMarticle2%>%
 
 file_path9 <- "data/NYTArticle.txt"
 
-NYTArticle <- read_lines(file_path9) %>%
+NYTArticle1 <- read_lines(file_path9) %>%
   tibble(Paragraph = .)
 
-NYTArticle <- NYTArticle%>%
+NYTArticle <- NYTArticle1%>%
   mutate(Word = str_split(Paragraph, "\\s+")) %>%
   unnest(Word) %>%
   select(Word)
 
 file_path10 <- "data/GoldmanArticle.txt"
 
-GoldmanArticle <- read_lines(file_path10) %>%
+GoldmanArticle1 <- read_lines(file_path10) %>%
   tibble(Paragraph = .)
 
-GoldmanArticle <- GoldmanArticle%>%
+GoldmanArticle <- GoldmanArticle1%>%
   mutate(Word = str_split(Paragraph, "\\s+")) %>%
   unnest(Word) %>%
   select(Word)
@@ -277,46 +279,100 @@ ggplot(data = Visual1Data, aes(x = fct_reorder(word, count), y = count, fill = c
 
 ```{r} 
 
-api_key <- "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"
+api_key <- "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"
 
 api_url <- "https://api.openai.com/v1/chat/completions"
 
-send_prompt <- function(prompt) {
-  body <- list(
-    model = "gpt-3.5-turbo-1106",
-    messages = list(
-      list(role = "user", content = prompt)
-    ),
-    max_tokens = 150,  # Adjust as needed
-    temperature = 0.2  # Adjust for creativity (0.0-1.0)
-  )
-  
-  response <- POST(
-    url = api_url,
-    add_headers(`Authorization` = paste("Bearer", api_key)),
-    content_type_json(),
-    body = toJSON(body, auto_unbox = TRUE)
-  )
-  print(3)
-  if (http_status(response)$category == "success") {
-    result <- fromJSON(content(response, "text"))
-    print(1)
-    # Extract the content of the assistant's message
-    if (length(result$choices) > 0 && length(result$choices[[1]]$message) > 0) {
-      print(result$choices$message$content)
-      return(result$choices$message$content)
-    } else {
-      return("No response generated.")
-    }
-  } else {
-    cat("Error in API request: ", content(response, "text"), "\n")
-    stop()
-  }
-}
-print(2)
-prompt_response <- send_prompt("write me a 4 line Frost Poem")
-print(prompt_response)
+cnbc <- read_lines(file_path) |>
+  paste(collapse = " ")
+powell <- read_lines(file_path2) |>
+  paste(collapse = " ")
+barr <- read_lines(file_path3) |>
+  paste(collapse = " ")
+bloomberg <- read_lines(file_path4) |>
+  paste(collapse = " ")
+brooking <- read_lines(file_path5) |>
+  paste(collapse = " ")
+dod <- read_lines(file_path6) |>
+  paste(collapse = " ")
+cnn <- read_lines(file_path7) |>
+  paste(collapse = " ")
+jpm <- read_lines(file_path8) |>
+  paste(collapse = " ")
+nyt <- read_lines(file_path9) |>
+  paste(collapse = " ")
+goldman <- read_lines(file_path10) |>
+  paste(collapse = " ")
 
+articles <- c(cnbc, powell, barr, bloomberg, brooking, dod, cnn, jpm, nyt, goldman)
+
+postGPT <-" "
+
+for (inst in articles){
+  body <- list(
+      model = "gpt-3.5-turbo-1106",
+      messages = list(
+        list(role = "user", content = paste(inst, 
+                                            " what are the three most important arguments of this article? be specific", sep="\n"))),
+      max_tokens = 150,  # Adjust as needed
+      temperature = 0.2  # Adjust for creativity (0.0-1.0)
+  )
+    
+  response <- POST(
+      url = api_url,
+      add_headers(`Authorization` = paste("Bearer", api_key)),
+      content_type_json(),
+      body = toJSON(body, auto_unbox = TRUE)
+  )
+  if (http_status(response)$category == "Success") {
+      result <- fromJSON(content(response, "text"))
+      print(1)
+      # Extract the content of the assistant's message
+      if (length(result$choices) > 0 && length(result$choices$message) > 0) {
+        postGPT <- paste(postGPT, result$choices$message$content, sep = "\n")
+      } else {
+        print("No response generated.")
+      }
+  } else {
+      print("Error in API request:")
+    }
+}
+
+data(stop_words)
+
+
+postGPT <- postGPT |>
+  tolower() |>
+  removePunctuation() |>
+  stripWhitespace()
+
+postW <- str_split(postGPT, "\\s+")[[1]]
+
+
+stops <- c("potential", "1", "2", "3", "monetary", "article", " ", "economy", "economic", "growth") #gets rid of other random words we don't want included
+cleanW <- removeWords(postW, stops)
+cleanW <- table(cleanW)
+word_freq_df <- as.data.frame(cleanW, stringsAsFactors=FALSE)
+names(word_freq_df) <- c("word", "freq")
+word_freq_df <- word_freq_df[order(-word_freq_df$freq),]
+
+word_freq_df<- word_freq_df |>
+    anti_join(stop_words, by="word") #removes stop words
+
+
+Visual2Data <- word_freq_df |>
+  filter(freq>3) |>
+  filter(freq<20) 
+
+ggplot(data = Visual2Data, aes(x = fct_reorder(word, freq), y = freq, fill = freq)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_viridis_c() +
+  guides(fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words in the articles")
 
 
 ```
