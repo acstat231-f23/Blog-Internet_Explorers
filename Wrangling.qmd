@@ -279,7 +279,7 @@ ggplot(data = Visual1Data, aes(x = fct_reorder(word, count), y = count, fill = c
 
 ```{r} 
 
-api_key <- "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"
+api_key <- ""
 
 api_url <- "https://api.openai.com/v1/chat/completions"
 
