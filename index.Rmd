@@ -185,6 +185,10 @@ word_counts <- combined_df |> #creates the counts, orders by descending
 ```
 
 ## Visualization 1
+
+To begin our analysis, we sought out articles relating to a series of key words that are relevant to our topic of interest. These articles were found through using a few different key word searches such as: "Israel-Gaza Conflict", "Global Macroeconomic Environment", "Economic Impact of war" and "How war impacts national economies". After performing these searches, we selected articles that had relevant publication dates for our analysis window (early 2022-present). We were sure to include text from different instutions such as Governments/National Banks, News Media groups, and high ranking individuals in the private sector. 
+
+
 ```{r fig.align="left", out.width="100%"}
 Visual1Data <- word_counts |>
   filter(count>25)

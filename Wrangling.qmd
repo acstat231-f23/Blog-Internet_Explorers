@@ -385,13 +385,18 @@ file_path_imports <- "data/CrudeOilImports.xlsx"
 
 file_path_exports <- "data/CrudeOilExports.xlsx"
 
-OilImports <- read_excel(file_path_imports)
-OilExports <- read_excel(file_path_exports)
+OilImports <- read_excel(file_path_imports, skip=2) |>
+  mutate(across(c(2:44), as.character)) |>
+  pivot_longer(!Country, names_to = "Year", values_to = "Imports")
+
+OilExports <- read_excel(file_path_exports, skip=2)|>
+  mutate(across(c(2:44), as.character)) |>
+  pivot_longer(!Country, names_to = "Year", values_to = "Exports")
 
 
 
 
-
+monthlydata <- read.csv("data/MonthlyOil.csv")
 
 
 
