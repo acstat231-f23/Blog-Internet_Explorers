@@ -381,6 +381,8 @@ ggplot(data = Visual2Data, aes(x = fct_reorder(word, freq), y = freq, fill = fre
 ```{r}
 #Wrangling the imports and exports data for the oil network. 
 
+#The units are B/D or barrels per day. 1 Barrel is about ~42 gallons
+
 file_path_imports <- "data/CrudeOilImports.xlsx"
 
 file_path_exports <- "data/CrudeOilExports.xlsx"
@@ -396,7 +398,9 @@ OilExports <- read_excel(file_path_exports, skip=2)|>
 
 
 
-monthlydata <- read.csv("data/MonthlyOil.csv")
+monthlydata <- read.csv("data/MonthlyOil.csv") |>
+#filter(FLOW %in% c("TOTEXPSB", "TOTIMPSB"))
+filter(COUNTRY == "USA")
 
 
 
