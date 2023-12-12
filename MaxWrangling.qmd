@@ -22,6 +22,9 @@ library(rvest)
 library(purrr)
 library(robotstxt)
 library(readxl)
+library(plotly)
+library(zoo)
+
 ```
 
 \newpage
@@ -29,7 +32,6 @@ library(readxl)
 
 
 ```{r}
-
 oil_pricing_import <- read_excel("data/Oil Pricing.XLSX")
 
 colnames(oil_pricing_import)
@@ -37,15 +39,25 @@ colnames(oil_pricing_import)
 oil_wrangled1 <- oil_pricing_import %>%
   select(date, US_pricing, europe_pricing, month, year)
 
-# Calculate the average che for each country and time period
+oil_wrangled1$date <- as.yearmon(oil_wrangled1$date, "%b-%Y")
 
+events <- data.frame(
+  event_date = as.yearmon(c('Feb-2022', 'Mar-2003'), "%b-%Y"),
+  event_label = c('Russia-Ukraine War Start', 'Iraq War Start')
+)
 
-
-#Joining based on country to see what we have thus far
-
-
-saveRDS(result, file = "Application/data/result.Rds")#Save Resulting Dataset
-
+# Plot using ggplot
+ggplot(oil_wrangled1, aes(x = date)) +
+  geom_line(aes(y = US_pricing, color = "US Pricing"), size = 1) +
+  geom_line(aes(y = europe_pricing, color = "Europe Pricing"), size = 1) +
+  labs(title = "Oil Pricing Over Time", x = "Date", y = "Pricing") +
+  scale_color_manual(values = c("US Pricing" = "blue", "Europe Pricing" = "red")) +
+  theme_minimal() +
+  theme(legend.position = c(0.1, 0.8)) +
+  geom_vline(data = events, aes(xintercept = as.numeric(event_date)), linetype = "dashed") +
+  annotate("text", x = as.yearmon('Feb-2022', "%b-%Y"), y = Inf, label = "Russia-Ukraine War Start", vjust = 1, hjust = 1.05) +
+  annotate("text", x = as.yearmon('Mar-2003', "%b-%Y"), y = Inf, label = "Iraq War Start", vjust = 1, hjust = 1.1) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
 
 
