@@ -1,0 +1,659 @@
+---
+title: "Analysing the Impact of War on Financial Markets and Trade"
+author: "Ethan Van De Water, Maximo Gonzalezß, Alex Nichols"
+date: "11/28/23"
+output:
+ # rmdformats::readthedown:
+  rmdformats::downcute:
+    highlight: "kate"
+---
+
+```{r setup, include = FALSE}
+# Set code chunk defaults 
+# Consider adding `message = FALSE` option
+knitr::opts_chunk$set(echo = FALSE) #means code will not be displayed by default, need to set echo=true in a specific chunk for this to happen. 
+                      
+# Set R environment options
+options(knitr.kable.NA = '')
+
+# Load packages
+library(tidyverse)
+library(tidytext)
+library(wordcloud)
+library(textdata)
+library(tidyverse)
+library(rvest)
+library(httr)
+library(stringr)
+library(plotly)
+library(dplyr)
+library(ggplot2)
+library(readxl)
+library(zoo)
+```
+
+# Intro
+
+The world runs on energy, and for the last 2 centuries, a major source of the worlds energy has been oil. Historically, it has been an incredibly profitable and necessary industry. Today, oil and gas provide [80%](https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20energy%20costs%2C%20driven%20by,energy%20in%20the%20United%20States.)80% of American energy, and provide >12 million American jobs. 
+
+
+The purpose of this blog is to analyze what institutions believe to be the most impactful effects of war, and inspect those arguments using supporting data and visualizations from a variety of sources. 
+
+
+# Content
+
+You can include text, `code`, and output as usual. Remember to take full advantage of Markdown and follow our [Style Guide](https://acstat231-f22.github.io/home/style-guide.html#Text_narration).
+
+```{r ggplot-example, fig.align="left", out.width="100%"}
+# ggplot(data = cars, aes(x = speed, y = dist)) + 
+#   geom_point() + 
+#   labs(x = "Speed of car (mph)",
+#        y = "Distance taken to stop (ft)",
+#        title = "Stopping distance increases with faster speeds",
+#        subtitle = "Based on 1920s study") +
+#   theme_classic()
+```
+
+
+```{r fig.align="left", out.width="100%"}
+
+
+#Load Data
+
+file_path <- "data/JamieDimonCNBCInterview.txt"
+
+# Read the text file into a data frame with one column named "Paragraph"
+JamieDimonCNBCInterview <- read_lines(file_path) %>%
+  tibble(Paragraph = .)
+
+# Separate each paragraph into words and unnest the data frame
+JamieDimonCNBCInterview <- JamieDimonCNBCInterview %>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path2 <- "data/JpowellSemiAnnualAddress.txt"
+
+JPowellSemiAnnualAddress <- read_lines(file_path2) %>%
+  tibble(Paragraph = .)
+
+JPowellSemiAnnualAddress <- JPowellSemiAnnualAddress %>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path3 <- "data/MichaelBarrTreasuryMarket.txt"
+
+MichaelBarrTreasury <- read_lines(file_path3) %>%
+  tibble(Paragraph = .)
+
+MichaelBarrTreasury <- MichaelBarrTreasury%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path4 <- "data/BloombergWarArticle.txt"
+
+BloombergArticle <- read_lines(file_path4) %>%
+  tibble(Paragraph = .)
+
+BloombergArticle <- BloombergArticle%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path5 <- "data/BrookingsArticle.txt"
+
+BrookingsArticle <- read_lines(file_path5) %>%
+  tibble(Paragraph = .)
+
+BrookingsArticle <- BrookingsArticle%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path6 <- "data/DODArticle.txt"
+
+DODArticle <- read_lines(file_path6) %>%
+  tibble(Paragraph = .)
+
+DODArticle <- DODArticle%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path7 <- "data/CnnArticle.txt"
+
+CnnArticle <- read_lines(file_path7) %>%
+  tibble(Paragraph = .)
+
+CnnArticle <- CnnArticle%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path8 <- "data/JPMarticle2.txt"
+
+JPMarticle2 <- read_lines(file_path8) %>%
+  tibble(Paragraph = .)
+
+JPMarticle2 <- JPMarticle2%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path9 <- "data/NYTArticle.txt"
+
+NYTArticle <- read_lines(file_path9) %>%
+  tibble(Paragraph = .)
+
+NYTArticle <- NYTArticle%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+file_path10 <- "data/GoldmanArticle.txt"
+
+GoldmanArticle <- read_lines(file_path10) %>%
+  tibble(Paragraph = .)
+
+GoldmanArticle <- GoldmanArticle%>%
+  mutate(Word = str_split(Paragraph, "\\s+")) %>%
+  unnest(Word) %>%
+  select(Word)
+
+ data(stop_words)
+
+ #Wrangle data
+combined_df <- rbind(JamieDimonCNBCInterview, JPowellSemiAnnualAddress, MichaelBarrTreasury,
+                     BloombergArticle, BrookingsArticle, DODArticle, CnnArticle, JPMarticle2, GoldmanArticle)|>
+  mutate(Word = tolower(Word)) |>#makes everything lowercase
+  rename(word = Word)|>
+  mutate(word = str_replace_all(word, "[^a-z'-]", "")) #makes it so there's no punctuation included in the dataframe       aside from ', -. 
+  
+words_to_remove <- c("leslie", "picker", "kelly","jamie", "dimon", "portant", "dont", "lot", "im", "stuff") #gets rid of other random words we don't want included
+
+for (wordReplace in words_to_remove) {#uses loop to check if words in combined df are a match from words_to_remove, replaces them with blank strings if they are
+  combined_df <- combined_df %>%
+    mutate(word = str_replace_all(word, wordReplace, ""))
+}
+
+combined_df<- combined_df |>
+    filter(nchar(word)>0) |>#removes the blank strings
+    anti_join(stop_words, by="word") #removes stop words
+
+word_counts <- combined_df |> #creates the counts, orders by descending
+  group_by(word) |>
+  summarize(count = n()) |>
+  group_by(count) |>
+  arrange(desc(count))
+```
+
+## Visualization 1
+
+To begin our analysis, we sought out articles relating to a series of key words that are relevant to our topic of interest. These articles were found through using a few different key word searches such as: "Israel-Gaza Conflict", "Global Macroeconomic Environment", "Economic Impact of war" and "How war impacts national economies". After performing these searches, we selected articles that had relevant publication dates for our analysis window (early 2022-present). We were sure to include text from different instutions such as Governments/National Banks, News Media groups, and high ranking individuals in the private sector. 
+
+
+```{r fig.align="left", out.width="100%"}
+Visual1Data <- word_counts |>
+  filter(count>25)
+
+ggplot(data = Visual1Data, aes(x = fct_reorder(word, count), y = count, fill = count)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_viridis_c() +
+  guides(fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "The Most Common Words in Documents Relating to War and Economics")+
+  theme_minimal()
+
+
+
+
+```
+We selected a series of articles from different institutions (Banks, Government, News & Media) that had titles relating to current international conflicts and economic sentiment. This word frequency analysis helped us decide where we should target our further analysis to explore the impact that war has on the global macro environment. Among this list: Oil, prices, and inflation were of great interest. 
+
+(sources listed below)
+
+```{r}
+knitr::include_graphics("img/Jpowellspeech.webp")
+#Photo of Jerome Powell giving a speech
+```
+[Jerome Powell](https://www.federalreservehistory.org/people/jerome-h-powell) speaks on Raising the benchmark Fed Funds Rate
+
+## Visualization 2
+
+```{r}
+file_path <- "data/CPIdata.csv"
+
+# Read CSV data into a data frame
+cpi_dataset <- read.csv(file_path)
+
+month_renaming<- c(
+  M01 = "January",
+  M02 = "February",
+  M03 = "March",
+  M04 = "April",
+  M05 = "May",
+  M06 = "June",
+  M07 = "July",
+  M08 = "August",
+  M09 = "September",
+  M10 = "October",
+  M11 = "November",
+  M12 = "December"
+)
+
+month_mapping <- c(
+  "January" = 1,
+  "February" = 2,
+  "March" = 3,
+  "April" = 4,
+  "May" = 5,
+  "June" = 6,
+  "July" = 7,
+  "August" = 8,
+  "September" = 9,
+  "October" = 10,
+  "November" = 11,
+  "December" = 12
+)
+
+
+cpi_dataset <- cpi_dataset %>%
+  mutate(Month = month_renaming[Period]) |> #create month column
+   mutate(Month = match(Month, names(month_mapping)), #create date column with month column
+         Date = as.Date(paste(Year, Month, "01", sep = "-"), format = "%Y-%m-%d"))
+
+
+# ggplot(cpi_dataset, aes(x = Date, y = Value)) +
+#   geom_line() +
+#   labs(title = "CPI Chart", x = "Date", y = "CPI") +
+#   theme_minimal()
+
+ggplot(cpi_dataset, aes(x = Date, y = Value)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "CPI From 2017-Present", x = "Date", y = "CPI") +
+  theme_minimal() +
+  geom_vline(xintercept = as.Date("2022-02-01") - 5, linetype = "dashed", color = "red") +  # Adjusted the offset
+  geom_vline(xintercept = as.Date("2023-10-01") - 5, linetype = "dashed", color = "blue") +  # Adjusted the offset
+  geom_text(data = cpi_dataset %>% filter(Date == as.Date("2022-02-01")), 
+            aes(x = as.Date("2022-02-01") - 5, y = Value, label = "Russia Invades Ukraine"),
+            vjust = -0.5, hjust = 1.0, color = "red") +
+  geom_text(data = cpi_dataset %>% filter(Date == as.Date("2023-10-01")), 
+            aes(x = as.Date("2023-10-01") - 5, y = Value, label = "Israel/Gaza"),
+            vjust = -0.5, hjust = 1.1, color = "blue") +
+  theme(legend.position = c(0.1, 0.8))  # Adjust legend position to match the oil pricing plot
+
+
+
+
+```
+
+[CPI](https://www.bls.gov/cpi/) (Consumer Price Index) is the average price paid by a consumer for a "basket" of consumer goods. Here, we are looking at the CPI for a U.S. consumer from 2017-2022. CPI is also used as an indicator for inflation. The purpose of this plot is to provide some context for the further analysis that will be performed. The CPI has increased steadily over time, but we are interested in seeing if in recent years, global conflicts were drivers of that increase. 
+
+
+## Visualization 3
+```{r fig.align="left", out.width="100%", include = FALSE}
+oil_pricing_import <- read_excel("data/Oil Pricing.XLSX")
+
+
+
+oil_wrangled1 <- oil_pricing_import %>%
+  select(date, US_pricing, europe_pricing, month, year)
+
+oil_wrangled1$date <- as.yearmon(oil_wrangled1$date, "%b-%Y")
+
+oil_wrangled1 <- oil_wrangled1 %>%
+  drop_na()
+
+events <- data.frame(
+  event_date = as.yearmon(c('Feb-2022', 'Mar-2003'), "%b-%Y"),
+  event_label = c('Russia-Ukraine War Start', 'Iraq War Start')
+)
+```
+
+```{r}
+# Plot using ggplot
+ggplot(oil_wrangled1, aes(x = date)) +
+  geom_line(aes(y = US_pricing, color = "US Pricing"), linewidth = 1) +  # Use linewidth instead of size
+  geom_line(aes(y = europe_pricing, color = "Europe Pricing"), linewidth = 1) +  # Use linewidth instead of size
+  labs(title = "Oil Pricing Over Time", x = "Date", y = "Pricing") +
+  scale_color_manual(values = c("US Pricing" = "blue", "Europe Pricing" = "red")) +
+  theme_minimal() +
+  theme(legend.position = c(0.1, 0.8)) +
+  geom_vline(data = events, aes(xintercept = as.numeric(event_date)), linetype = "dashed") +
+  annotate("text", x = as.yearmon('Feb-2022', "%b-%Y"), y = Inf, label = "Russia-Ukraine War Start", vjust = 1, hjust = 1.1) +
+  annotate("text", x = as.yearmon('Mar-2003', "%b-%Y"), y = Inf, label = "Iraq War Start", vjust = 1, hjust = 1.1) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+```
+
+Over the years, oil pricing has been significantly influenced by key geopolitical moments. From conflicts to major geopolitical shifts, the plot sheds light on how world events send shockwaves through the oil market. Vertical dashed lines mark pivotal occasions, such as the onset of the Russia-Ukraine War in February 2022 and the Iraq War in March 2003, offering a clear visual of their immediate impact on oil prices. This visualization serves as a concise yet insightful exploration, illustrating the interconnected relationship between geopolitical happenings and the fluctuations in oil prices, unraveling the narrative of how the global stage shapes the cost of this vital resource.
+
+
+## Further Exploration {.tabset}
+
+Uses subsection syntax to get the tabs. Looks cool I think
+
+### Oil (Interactive Visuzlization)
+
+You can make a bulleted list like this:
+
+* item 1
+* item 2
+* item 3
+
+
+### Trade (Network)
+
+
+You can make a numbered list like this
+
+1. First thing I want to say
+2. Second thing I want to say
+3. Third thing I want to say
+
+
+
+
+
+## Links 
+Examples and additional guidance are provided below. 
+
+Take note of the the default code chunk options in the `setup` code chunk. For example, unlike the rest of the Rmd files we worked in this semester, the default code chunk option is `echo = FALSE`, so you will need to set `echo  = TRUE` for any code chunks you would like to display in the blog. You should be thoughtful and intentional about the code you choose to display. 
+
+
+You can include [links](https://www.datadreaming.org/post/r-markdown-theme-gallery/) using Markdown syntax as shown. 
+
+You should include links to relevant sites as you write. You should additionally include a list of references as the end of your blog with full citations (and relevant links).
+
+
+## Visualizations 
+
+Visualizations, particularly interactive ones, will be well-received. That said, do not overuse visualizations. You may be better off with one complicated but well-crafted visualization as opposed to many quick-and-dirty plots. Any plots should be well-thought-out, properly labeled, informative, and visually appealing.
+
+If you want to include dynamic visualizations or tables, you should explore your options from packages that are built from [**htmlwidgets**](https://www.htmlwidgets.org/showcase_leaflet.html). These **htmlwidgets**-based packages offer ways to build lighterweight, dynamic visualizations or tables that don't require an R server to run! A more complete list of packages is available on the linked website, but a short list includes:
+
+* [**plotly**](https://plot.ly/r/): Interactive graphics with D3
+* [**leaflet**](https://rstudio.github.io/leaflet/): Interactive maps with OpenStreetMap
+* [**dygraphs**](http://rstudio.github.io/dygraphs): Interactive time series visualization
+* [**visNetwork**](http://dataknowledge.github.io/visNetwork): Network graph visualization vis.js
+* [**sparkline**](https://github.com/htmlwidgets/sparkline): Small inline charts
+* [**threejs**](https://github.com/bwlewis/rthreejs): Interactive 3D graphics
+    
+You may embed a published Shiny app in your blog if useful, but be aware that there is a limited window size for embedded objects, which tends to makes the user experience of the app worse relative to a dedicated Shiny app page. Additionally, Shiny apps will go idle after a few minutes and have to be reloaded by the user, which may also affect the user experience. 
+
+Any Shiny apps embedded in your blog should be accompanied by the link to the published Shiny app (I did this using a figure caption in the code chunk below, but you don't have to incorporate the link in this way).
+
+```{r ds-salaries-app, out.width = "100%", out.extra = 'data-external="1" frameborder="no"', fig.cap = "[Data Science Salaries Shiny App](https://bebailey.shinyapps.io/data-science-salaries)"}
+knitr::include_app("https://bebailey.shinyapps.io/data-science-salaries",
+                   height = "500px")
+```
+
+
+## Tables
+
+### **DT** package
+
+The [**DT** package](https://rstudio.github.io/DT/) is great for making dynamic tables that can be displayed, searched, and filtered by the user without needing an R server or Shiny app!
+
+Note: you should load any packages you use in the `setup` code chunk as usual. The `library()` functions are shown below just for demonstration.
+
+```{r dt-example, message=FALSE, echo=TRUE}
+library(DT)
+mtcars %>% 
+  select(mpg, cyl, hp) %>% 
+  datatable(colnames = c("MPG", "Number of cylinders", "Horsepower"),
+            filter = 'top',
+            options = list(pageLength = 10, autoWidth = TRUE))
+```
+
+### **kableExtra** package
+
+You can also use [**kableExtra**](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html) for customizing HTML tables.
+
+```{r kable-example, echo=TRUE, message=FALSE}
+library(kableExtra)
+summary(cars) %>%
+  kbl(col.names = c("Speed", "Distance"),
+      row.names = FALSE) %>%
+  kable_styling(bootstrap_options = "striped",
+                full_width = FALSE) %>%
+  row_spec(0, bold = TRUE) %>%
+  column_spec(1:2, width = "1.5in") 
+```
+
+
+## Images
+
+Images and gifs can be displayed using code chunks:
+
+```{r, fig.cap='"Safe Space" by artist Kenesha Sneed', out.width="80%", fig.align="center"}
+knitr::include_graphics("img/Kenesha-Sneed_safe-space.jpeg")
+```
+
+
+```{r, fig.cap="This is a figure caption", out.width="50%", fig.align="center"}
+knitr::include_graphics("https://media.giphy.com/media/H7ZrrA9V2pd3Tehdds/giphy.gif")
+```
+
+You may also use Markdown syntax for displaying images as shown below, but code chunks offer easier customization of the image size and alignment.
+
+![This is another figure caption](https://media.giphy.com/media/8i5IvxP9ZLgmjXN1BF/giphy.gif)
+
+Either way, the file path can be a local path within your project directory or a URL for an image hosted online. This syntax works for PNG, PDF, JPG, and even GIF formats.
+
+
+## Videos
+
+You can use code chunks or Markdown syntax include links to any valid YouTube or Vimeo URLs (see [here](https://bookdown.org/yihui/rmarkdown/learnr-videos.html) for details) or point to a location within your project directory. 
+
+Code chunk:
+
+```{r, out.width="80%", fig.align="center"}
+knitr::include_url("https://www.youtube.com/watch?v=up8ODGFWgFg")
+```
+
+Markdown syntax:
+
+![](https://www.youtube.com/watch?v=up8ODGFWgFg){width="90%"}
+
+
+You may need to push your updates to GitHub to see if the videos work.
+
+
+
+
+## Equations
+
+You might include equations if part of the purpose of your blog is to explain a statistical method. There are two ways to include equations:
+
+* Inline: $b \sim N(0, \sigma^2_b)$
+* Display-style (displayed on its own line): 
+$$\frac{\sigma^2_b}{\sigma^2_b + \sigma^2_e}$$
+
+For typesetting equations appropriately, check out the [AMS-LaTeX quick reference](https://github.com/manuelemacchia/math-latex/blob/master/amsmath.pdf) or take a look at the *Symbols in math mode* section of this  [cheat sheet](https://users.dickinson.edu/~richesod/latex/latexcheatsheet.pdf)  (or do some extra Googling---there are *many* resources).
+
+
+
+# Formatting
+
+## Tabbed subsections {.tabset}
+
+Each subsection below the "Tabbed subsections" section heading will appear in a tab. See R Markdown Cookbook [Section 7.6: Put content in tabs](https://bookdown.org/yihui/rmarkdown-cookbook/html-tabs.html) for additional customization options. 
+
+### Bulleted list
+
+You can make a bulleted list like this:
+
+* item 1
+* item 2
+* item 3
+
+
+### Numbered list
+
+
+You can make a numbered list like this
+
+1. First thing I want to say
+2. Second thing I want to say
+3. Third thing I want to say
+
+
+
+## Column formatting
+
+<!-- Begin columns environment -->
+:::::: {style="display: flex; font-size: large;"}
+
+<!-- Create a column -->
+::: {}
+### Content Column 1
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vel ipsum eu sem facilisis porttitor. Integer eu tristique lectus. Vestibulum nisi risus, porta sit amet cursus nec, auctor ac tellus. Integer egestas viverra rhoncus. Fusce id sem non ante vestibulum posuere ac sed lorem. Proin id felis a mi pellentesque viverra in at nulla. Duis augue nulla, aliquet ac ligula a, sagittis varius lorem.
+
+
+
+:::
+
+<!-- Create another column (this one is just adding horizontal space to separate content) -->
+::: {}
+<div class="horizontalgap" style="width:60px"></div>
+:::
+
+<!-- Create another column -->
+::: {}
+
+### Content Column 2
+
+Aliquam non ante et erat luctus hendrerit eu ac justo. Fusce lacinia pulvinar neque non laoreet. Fusce vitae mauris pharetra, scelerisque purus eget, pharetra nisl. Aenean volutpat elementum tortor vitae rhoncus. Phasellus nec tellus euismod neque congue imperdiet tincidunt in mauris. Morbi eu lorem molestie, hendrerit lorem nec, semper massa. Sed vulputate hendrerit ex, eget cursus purus. Pellentesque consequat erat leo, eleifend porttitor lacus porta at. Vivamus faucibus quam ipsum, id condimentum ligula malesuada ultrices. Nullam luctus leo elit, vitae rutrum nibh venenatis eget. Nam at sodales purus. Proin nulla tellus, lacinia eget pretium sed, vehicula aliquet neque. Morbi vel eros elementum, suscipit elit eu, consequat libero. Nulla nec aliquet neque. Nunc bibendum sapien lectus, sed elementum nisi rutrum non. Ut vulputate at lacus eget maximus.
+
+```{r, out.width="80%", fig.align="right"}
+mtcars %>% 
+  ggplot(aes(x = wt, y = mpg)) +
+  geom_point()
+```
+
+:::
+::::::
+<!-- End columns environment with matching length indicator-->
+
+
+
+
+# Customizing your blog design
+
+
+As a *final* detail **only** if you have time, you can explore options for customizing the style of your blog. By default, we are using the `readthedown` theme from the [**rmdformats** package](https://github.com/juba/rmdformats) (see Line 6 of this file if you want to switch out themes).
+
+
+## Theme
+You can use the [**rmdformats** package](https://github.com/juba/rmdformats) to play around with some pre-built themes. There are, I'm sure, many many many more similar packages with built in themes, or you can look into how to include a CSS code chunk to customize aspects of a theme.  
+
+Using the **rmdformats** package, you can change the theme itself (Line 6): 
+
+* `rmdformats::readthedown`
+* `rmdformats::downcute` 
+  * For `downcute` only, you can add a new indented line below Line 6 with the code `downcute_theme: "chaos"` for the `downcute chaos` theme
+* `rmdformats::robobook` 
+* `rmdformats::material`
+
+You can explore additional YAML options by looking at the [**rmdformats** package](https://github.com/juba/rmdformats) page or running, for example, `?rmdformats::readthedown()` to see the help documentation for a particular theme from the package. 
+
+## Synax highlighting
+
+You can also change the code chunk syntax highlighting option (Line 7, `highlight`): 
+
+* `"default"`
+* `"tango"`
+* `"pygments"`
+* `"kate"`
+* `"monochrome"`
+* `"espresso"`
+* `"zenburn"`
+* `"haddock"`
+* `"textmate"` 
+* `NULL` for no syntax highlighting (not recommended)
+
+## Font size, type, and other customization
+
+Further customization requires adding a CSS style file or code chunk or incorporating other development options. Customization beyond the **rmdformats** package should be your lowest and final priority for the project. Ensure your content is fully prepared first.
+
+
+# References
+
+
+
+Typically, references in R Markdown (and LaTeX) files are [incorporated with a BibTeX database](https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html) (a .bib file). You can try this approach or  manually include either a numbered or alphabetized list. 
+
+You can list R package citations with the code `citation("packageName")` in the console and then copy (and reformat as needed) the relevant text, e.g.,
+```{r}
+citation("DT")
+```
+
+The following citations are based on the American Statistical Association citation style (not all of these references are used in this document).:
+
+
+<!-- Textbook -->
+Baumer, B. S., Kaplan, D. T., and Horton, N. J. (2021), *Modern Data Science with R* (2nd ed.), Boca Raton, FL: CRC Press.
+
+<!-- Journal article -->
+Broman, K. W. and Woo, K. H. (2018), "Data Organization in Spreadsheets," *The American Statistician*, 72:1, 2-10, doi: [10.1080/00031305.2017.1375989](https://doi.org/10.1080/00031305.2017.1375989)
+
+<!-- Website -->
+Columbia University Libraries (n.d.), "Data Citation," available at <https://guides.library.columbia.edu/datacitation>.
+
+<!-- Journal article -->
+McNamara, A. and Horton N. J. (2018) "Wrangling Categorical Data in R," *The American Statistician*, 72:1, 97-104, doi: [10.1080/00031305.2017.1356375](https://doi.org/10.1080/00031305.2017.1356375).
+
+<!-- Dataset -->
+Shah, Syed A. A. (October 2022), "Starbucks Drinks" (Version 1), *Kaggle*, available at <https://www.kaggle.com/datasets/syedasimalishah/starbucks-drinks>.
+
+<!-- R package -->
+Xie Y, Cheng J, Tan X (2022). "DT: A Wrapper of the JavaScript Library 'DataTables'," R package version 0.24, available at <https://CRAN.R-project.org/package=DT>.
+
+Article Sources:
+
+Ma, Dorothy, and Alice Huang. “Evergrande under Pressure in Hong Kong Court to Repay Creditors.” Bloomberg.Com, Bloomberg, 28 Nov. 2023, www.bloomberg.com/news/features/2023-11-28/evergrande-under-pressure-in-hong-kong-court-to-repay-creditors. 
+
+Jeffrey Feltman, Sharan Grewal, et al. “The Israel and Gaza War: Economic Repercussions.” Brookings, 24 Oct. 2023, www.brookings.edu/articles/the-israel-and-gaza-war-economic-repercussions/. 
+
+Mena, Bryan. “Israel-Hamas War Risks Further Deglobalization and Inflation | CNN Business.” CNN, Cable News Network, 15 Oct. 2023, www.cnn.com/2023/10/15/economy/stocks-week-ahead-deglobalization/index.html. 
+
+“Defense Department Continues to Stress Law of War with Israel.” U.S. Department of Defense, www.defense.gov/News/News-Stories/Article/Article/3578196/defense-department-continues-to-stress-law-of-war-with-israel/. Accessed 5 Dec. 2023. 
+
+Smith, Elliot. “Goldman Sachs Says the Israel-Hamas War Could Have Major Implications for Europe’s Economy.” CNBC, CNBC, 7 Nov. 2023, www.cnbc.com/2023/11/03/goldman-says-israel-hamas-war-could-majorly-impact-europes-economy.html. 
+
+“CNBC Exclusive: CNBC TRANSCRIPT: JPMorgan Chase Chairman &amp; CEO Jamie Dimon Speaks with CNBC’s Leslie Picker on ‘Power Lunch’ Today.” CNBC, CNBC, 2 Aug. 2023, www.cnbc.com/2023/08/02/cnbc-exclusive-cnbc-transcript-jpmorgan-chase-chairman-ceo-jamie-dimon-speaks-with-cnbcs-leslie-picker-on-power-lunch-today.html. 
+
+“2023 Economic Outlook: Insights &amp; Trends [Midyear Update].” 2023 Economic Outlook: Insights &amp; Trends [Midyear Update], J.P. Morgan Chase, 8 Dec. 2022, www.jpmorgan.com/insights/outlook/economic-outlook/economic-trends. 
+
+“Testimony by Chair Powell on the Semiannual Monetary Policy Report to the Congress.” Board of Governors of the Federal Reserve System, www.federalreserve.gov/newsevents/testimony/powell20230621a.htm. Accessed 5 Dec. 2023. 
+
+“Speech by Vice Chair for Supervision Barr on Financial Stability.” Board of Governors of the Federal Reserve System, www.federalreserve.gov/newsevents/speech/barr20231116a.htm. Accessed 5 Dec. 2023. 
+
+Rappeport, Alan, and Patricia Cohen. “Fragile Global Economy Faces New Crisis in Israel-Gaza War.” The New York Times, The New York Times, 10 Oct. 2023, www.nytimes.com/2023/10/10/business/economy/global-economy-israel-gaza-war.html. 
+
+Data Sources: 
+
+“CPI Home.” U.S. Bureau of Labor Statistics, U.S. Bureau of Labor Statistics, www.bls.gov/cpi/. Accessed 5 Dec. 2023. 
+
+“PETROLEUM & OTHER LIQUIDS.” Spot Prices for Crude Oil and Petroleum Products, www.eia.gov/dnav/pet/pet_pri_spt_s1_m.htm. Accessed 11 Dec. 2023. 
+
+
+Normal Sources: 
+
+https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20energy%20costs%2C%20driven%20by,energy%20in%20the%20United%20States.
+
+
+  
+
+
+ 
+
+
