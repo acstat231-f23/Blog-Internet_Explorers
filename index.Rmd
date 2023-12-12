@@ -464,11 +464,20 @@ The [**DT** package](https://rstudio.github.io/DT/) is great for making dynamic 
 
 ```{r dt-example, message=FALSE, echo=TRUE}
 
-OilExports%>%
-  select(Country,Year,Exports)|>
-  datatable(colnames = c("Country","Year","Exports"),
-            filter = 'top',
-            options = list(pagelength=10, autoWidth=TRUE))
+OilExports %>%
+  select(Country, Year, Exports) %>%
+  datatable(
+    colnames = c("Country", "Year", "Exports"),
+    filter = 'top',
+    options = list(
+      pagelength = 10,
+      autoWidth = TRUE,
+      columnDefs = list(
+        list(targets = 2, searchable = TRUE),  # 2 is the index of the 'Year' column
+        list(targets = c(0, 1), searchable = FALSE)  # Disable search for other columns
+      )
+    )
+  )
 ```
 
 
@@ -563,9 +572,7 @@ Further customization requires adding a CSS style file or code chunk or incorpor
 Typically, references in R Markdown (and LaTeX) files are [incorporated with a BibTeX database](https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html) (a .bib file). You can try this approach or  manually include either a numbered or alphabetized list. 
 
 You can list R package citations with the code `citation("packageName")` in the console and then copy (and reformat as needed) the relevant text, e.g.,
-```{r}
-citation("DT")
-```
+
 
 The following citations are based on the American Statistical Association citation style (not all of these references are used in this document).:
 
