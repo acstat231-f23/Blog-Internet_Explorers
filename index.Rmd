@@ -59,7 +59,7 @@ library(DT)
 
 # Intro
 
-The world runs on energy, and for the last 2 centuries, a major source of the worlds energy has been oil. Historically, it has been an incredibly profitable and necessary industry. Today, oil and gas provide [80%](https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20energy%20costs%2C%20driven%20by,energy%20in%20the%20United%20States.) of American energy, and provide >12 million American jobs. A similar trend is followed globally, with few exceptions. As a result of the prominence of oil and gas within each nation-state's energy consumption profile, it is a sought after commodity. Many conflicts both historically and currently revolve around, or have implications relating to access to energy resources. A period specific example would be the most recent outbreak of the Russia-Ukraine war, beginning in February 2022. As a result of the re-kindling of this conflict, many European nations that were formerly served by Russian oil/gas had to find new sources of energy, as it was no longer an option to purchase from Russia given the nation's encroachment upon sovereignty. 
+The world runs on energy, and for the last 2 centuries, a major source of the worlds energy has been oil. Historically, it has been an incredibly profitable industry. Today, oil and gas provide [80%](https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20energy%20costs%2C%20driven%20by,energy%20in%20the%20United%20States.) of American energy, and provide >12 million American jobs. A similar trend is followed globally, with few exceptions. As a result of the prominence of oil and gas within each nation-state's energy consumption profile, it is a sought after commodity. Many conflicts both prior and current revolve around, or have implications relating to access to energy resources. A period specific example would be the most recent outbreak of the Russia-Ukraine war, beginning in February 2022. As a result of the re-kindling of this conflict, many European nations that were formerly served by Russian oil/gas had to find new sources of energy, as it was no longer an option to purchase from Russia given the nation's encroachment upon Ukraine's sovereignty. 
 
 This blog will provide further analysis of the impact that global conflicts have on the movement of energy resources, the price of energy resources, and the subsequent increases of prices for consumers.
 
@@ -224,13 +224,12 @@ ggplot(data = Visual1Data, aes(x = fct_reorder(word, count), y = count, fill = c
 ```
 The output of this analysis gave us insight into the sentiment of the media, national governments, as well as the private sector. Obviously, an article from Bloomberg is going to be more likely to contain the words 'inflation' 'market' or 'economy' than an Emily Dickinson Poem, but seeing the other words that also appear in tandem with the aforementioned and viewing the output holistically still gives us a unique takeaway. That is: among all these economy related terms - oil is also a frequent. Thus, doing a deeper dive into how oil/energy fits into the macro environment has the potential to allow us to unearth new trends and make new discoveries. 
 
-(sources listed below)
 
 ```{r}
 knitr::include_graphics("img/Jpowellspeech.webp")
 #Photo of Jerome Powell giving a speech
 ```
-[Jerome Powell](https://www.federalreservehistory.org/people/jerome-h-powell) speaks on Raising the benchmark Fed Funds Rate
+Federal Reserve Chair [Jerome Powell](https://www.federalreservehistory.org/people/jerome-h-powell) speaks on raising the benchmark Fed Funds Rate, which impacts the price of borrowing for financial institutions and eventually, consumers as well. 
 
 
 ## Importing & Exporting Nations {.tabset}
@@ -341,8 +340,6 @@ combined_df %>%
      rownames=FALSE,
     options = list(
       pagelength = 10,
-      #autoWidth = TRUE,
-           
       columnDefs = list(
         list(targets = c(0, 1), searchable = TRUE, width=100),  
         list(targets = c(2,3), searchable = FALSE, width=50)  
@@ -350,11 +347,54 @@ combined_df %>%
     )
   )
 ```
+## Oil Pricing 
 
+As previously mentioned, for nations such as the United States, the amount of oil that is imported or exported may be dependent on the prices of the commodity in different markets. The visualization below shows the differences in the price of a barrel of crude oil month to month in both the European and US markets.
+
+```{r fig.align="left", out.width="100%", include = FALSE}
+oil_pricing_import <- read_excel("data/Oil Pricing.xlsx")
+
+
+
+oil_wrangled1 <- oil_pricing_import %>%
+  select(date, US_pricing, europe_pricing, month, year)
+
+oil_wrangled1$date <- as.yearmon(oil_wrangled1$date, "%b-%Y")
+
+oil_wrangled1 <- oil_wrangled1 %>%
+  drop_na()
+
+events <- data.frame(
+  event_date = as.yearmon(c('Feb-2022', 'Mar-2003'), "%b-%Y"),
+  event_label = c('Russia-Ukraine War Start', 'Iraq War Start')
+)
+```
+
+
+```{r}
+# Plot using ggplot
+ggplot(oil_wrangled1, aes(x = date)) +
+  geom_line(aes(y = US_pricing, color = "US Pricing"), linewidth = 1) +  # Use linewidth instead of size
+  geom_line(aes(y = europe_pricing, color = "Europe Pricing"), linewidth = 1) +  # Use linewidth instead of size
+  labs(title = "Oil Pricing Over Time", x = "Date", y = "Pricing") +
+  scale_color_manual(values = c("US Pricing" = "blue", "Europe Pricing" = "red")) +
+  theme_minimal() +
+  theme(legend.position = c(0.1, 0.8)) +
+  geom_vline(data = events, aes(xintercept = as.numeric(as.yearmon(event_date))), linetype = "dashed") +
+  geom_text(data = data.frame(label = "Russia-Ukraine War Start", x = as.numeric(as.yearmon('Feb-2022', "%b-%Y")), y = Inf), 
+            aes(x = x, y = y, label = label), vjust = 1, hjust = 1.05) +
+  geom_text(data = data.frame(label = "Iraq War Start", x = as.numeric(as.yearmon('Mar-2003', "%b-%Y")), y = Inf), 
+            aes(x = x, y = y, label = label), vjust = 1, hjust = 1.1) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+```
+Over the years, oil pricing has been significantly influenced by key geopolitical moments. From large scale conflicts to  geopolitical shifts, the plot reflects on how world events impact the oil market. Vertical dashed lines mark pivotal occasions, such as the onset of the Russia-Ukraine War in February 2022 and the Iraq War in March 2003. This visualization serves as a concise yet insightful purpose: illustrating the relationship between geopolitical happenings and the fluctuations in oil prices.
 
 
 
 ## CPI Background 
+
+We know that oil prices fluctuate. How does this impact the average American day to day? Probably the most salient impact of the volatility of oil prices is gasoline prices in the United States. With gasoline, there is a very straightforward series of connections from the price of oil increasing to the price at the pump increasing when one goes to fill their car up with gas. However, the impact that rising oil prices have on the cost of other goods may be less obvious. For example, goods that are shipped from China to the West Coast, and then subsequently trucked across the country may end up being more expensive as a result of the rising input costs for logistics companies. Logistics companies are paying more in fuel to bring goods places, and passing that cost onto the firm who contracts them. Then, that firm is passing the increased cost of transportation onto the consumer by way of increased prices for the particular set of goods they provide. As you can probably guess, these impacts can be difficult to quantify. 
 ```{r}
 file_path <- "data/CPIdata.csv"
 
@@ -419,51 +459,15 @@ ggplot(cpi_dataset, aes(x = Date, y = Value)) +
   theme(legend.position = c(0.1, 0.8))  # Adjust legend position to match the oil pricing plot
 
 ```
-[CPI](https://www.bls.gov/cpi/) (Consumer Price Index) is the average price paid by a consumer for a "basket" of consumer goods. Here, we are looking at the CPI for a U.S. consumer from 2017-2022. CPI is also used as an indicator for inflation. The purpose of this plot is to provide some context for the further analysis that will be performed. The CPI has increased steadily over time, but we are interested in seeing if in recent years, global conflicts were drivers of that increase. 
+Consumer Price Index [(CPI)](https://www.bls.gov/cpi/) is the average price paid by a consumer for a "basket" of consumer goods. Here, we are looking at the CPI for a U.S. consumer from 2017-2022. The CPI is a feasible way to measure how much of the increased cost of production for a set of goods goods is passed on to consumers. Obviously, it is less volatile than oil prices, as it is an index rather than a explicit value for particular good/commodity. However, we can see that over time, the price for the "basket" of consumer goods has increased. It is near-impossible to pin down one specific reason for the increase in the CPI (We would deserve the Nobel Prize in Economics if we did so), but we can speculate based on the data we have. Looking at the range from 2020 onward in the oil prices chart, we have seen the moving average increase, bounded by a support zone of about $25 US Dollars (This just means the chart hasn't dipped below that level recently). We see a similar upward trend in our CPI chart over the same period. We are unable to make a causal claim because, as previously mentioned, it is difficult to pin down if/how much increased oil prices have effected the cost of consumer goods. However, the idea that the price of oil, which is found in many production processes, has some impact on the final price paid for a good, is not unheard of. 
 
 
-## Oil Pricing 
+# Conclusion
 
+The analysis that we performed within this project was illuminating. It was surrounding a topic each of us knew to be important, but actually knew very little about. The fact that the lights turn on, water runs, phones charge, all happen as a result of the production and usage of energy. In first world nations like the US, it is often taken for granted. Thus, doing a deeper dive into oil, which is still the predominant source of energy for many nations, was very interesting. It allowed us
+to discover the complexity and volatility of the global market for the commodity, as well as investigate how said volatility impacts citizens on a day to day basis. 
 
-```{r fig.align="left", out.width="100%", include = FALSE}
-oil_pricing_import <- read_excel("data/Oil Pricing.xlsx")
-
-
-
-oil_wrangled1 <- oil_pricing_import %>%
-  select(date, US_pricing, europe_pricing, month, year)
-
-oil_wrangled1$date <- as.yearmon(oil_wrangled1$date, "%b-%Y")
-
-oil_wrangled1 <- oil_wrangled1 %>%
-  drop_na()
-
-events <- data.frame(
-  event_date = as.yearmon(c('Feb-2022', 'Mar-2003'), "%b-%Y"),
-  event_label = c('Russia-Ukraine War Start', 'Iraq War Start')
-)
-```
-
-```{r}
-# Plot using ggplot
-ggplot(oil_wrangled1, aes(x = date)) +
-  geom_line(aes(y = US_pricing, color = "US Pricing"), linewidth = 1) +  # Use linewidth instead of size
-  geom_line(aes(y = europe_pricing, color = "Europe Pricing"), linewidth = 1) +  # Use linewidth instead of size
-  labs(title = "Oil Pricing Over Time", x = "Date", y = "Pricing") +
-  scale_color_manual(values = c("US Pricing" = "blue", "Europe Pricing" = "red")) +
-  theme_minimal() +
-  theme(legend.position = c(0.1, 0.8)) +
-  geom_vline(data = events, aes(xintercept = as.numeric(as.yearmon(event_date))), linetype = "dashed") +
-  geom_text(data = data.frame(label = "Russia-Ukraine War Start", x = as.numeric(as.yearmon('Feb-2022', "%b-%Y")), y = Inf), 
-            aes(x = x, y = y, label = label), vjust = 1, hjust = 1.05) +
-  geom_text(data = data.frame(label = "Iraq War Start", x = as.numeric(as.yearmon('Mar-2003', "%b-%Y")), y = Inf), 
-            aes(x = x, y = y, label = label), vjust = 1, hjust = 1.1) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-
-```
-
-Over the years, oil pricing has been significantly influenced by key geopolitical moments. From conflicts to major geopolitical shifts, the plot sheds light on how world events send shockwaves through the oil market. Vertical dashed lines mark pivotal occasions, such as the onset of the Russia-Ukraine War in February 2022 and the Iraq War in March 2003, offering a clear visual of their immediate impact on oil prices. This visualization serves as a concise yet insightful exploration, illustrating the interconnected relationship between geopolitical happenings and the fluctuations in oil prices, unraveling the narrative of how the global stage shapes the cost of this vital resource.
-
+Fortunately, when we were conducting our project we did not have much difficulty finding data. The oil industry is well regulated by government organizations and because it is such a valuable industry at the global scale, it is advantageous for companies and groups to collect lots of data. The majority of our quantitative data came from government websites, or international organizations such as OPEC. We also used text as data, which was easily accessible. 
 
 # References
 
