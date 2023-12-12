@@ -335,7 +335,7 @@ ggplot(world_import_export_map4, aes(geometry=geom, fill = Exports)) +
   scale_fill_viridis(option = "magma", direction = -1) 
 ```
 
-## CPI Backgorund 
+## CPI Background 
 ```{r}
 file_path <- "data/CPIdata.csv"
 
@@ -405,8 +405,9 @@ ggplot(cpi_dataset, aes(x = Date, y = Value)) +
 
 ## Oil Pricing 
 
-```{r}
-oil_pricing_import <- read_excel("data/Oil Pricing.XLSX")
+
+```{r fig.align="left", out.width="100%", include = FALSE}
+oil_pricing_import <- read_excel("data/Oil Pricing.xlsx")
 
 
 
@@ -422,38 +423,27 @@ events <- data.frame(
   event_date = as.yearmon(c('Feb-2022', 'Mar-2003'), "%b-%Y"),
   event_label = c('Russia-Ukraine War Start', 'Iraq War Start')
 )
-
-
-
-# ggplot(oil_wrangled1, aes(x = date)) +
-#   geom_line(aes(y = US_pricing, color = "US Pricing"), linewidth = 1) +  
-#   geom_line(aes(y = europe_pricing, color = "Europe Pricing"), linewidth = 1) +  
-#   labs(title = "Oil Pricing Over Time", x = "Date", y = "Pricing") +
-#   scale_color_manual(values = c("US Pricing" = "blue", "Europe Pricing" = "red")) +
-#   theme_minimal() +
-#   theme(legend.position = c(0.1, 0.8)) +
-#   geom_vline(data = events, aes(xintercept = as.numeric(event_date)), linetype = "dashed") +
-#   annotate("text", x = as.yearmon('Feb-2022', "%b-%Y"), y = Inf, label = "Russia-Ukraine War Start", vjust = 1, hjust = 1.1) +
-#   annotate("text", x = as.yearmon('Mar-2003', "%b-%Y"), y = Inf, label = "Iraq War Start", vjust = 1, hjust = 1.1) +
-#   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
-
 
 ```{r}
+# Plot using ggplot
+ggplot(oil_wrangled1, aes(x = date)) +
+  geom_line(aes(y = US_pricing, color = "US Pricing"), linewidth = 1) +  # Use linewidth instead of size
+  geom_line(aes(y = europe_pricing, color = "Europe Pricing"), linewidth = 1) +  # Use linewidth instead of size
+  labs(title = "Oil Pricing Over Time", x = "Date", y = "Pricing") +
+  scale_color_manual(values = c("US Pricing" = "blue", "Europe Pricing" = "red")) +
+  theme_minimal() +
+  theme(legend.position = c(0.1, 0.8)) +
+  geom_vline(data = events, aes(xintercept = as.numeric(as.yearmon(event_date))), linetype = "dashed") +
+  geom_text(data = data.frame(label = "Russia-Ukraine War Start", x = as.numeric(as.yearmon('Feb-2022', "%b-%Y")), y = Inf), 
+            aes(x = x, y = y, label = label), vjust = 1, hjust = 1.05) +
+  geom_text(data = data.frame(label = "Iraq War Start", x = as.numeric(as.yearmon('Mar-2003', "%b-%Y")), y = Inf), 
+            aes(x = x, y = y, label = label), vjust = 1, hjust = 1.1) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
-# ggplot(oil_wrangled1, aes(x = date)) +
-#   geom_line(aes(y = US_pricing, color = "US Pricing"), linewidth = 1) +
-#   geom_line(aes(y = europe_pricing, color = "Europe Pricing"), linewidth = 1) +
-#   labs(title = "Oil Pricing Over Time", x = "Date", y = "Pricing") +
-#   scale_color_manual(values = c("US Pricing" = "blue", "Europe Pricing" = "red")) +
-#   theme_minimal() +
-#   theme(legend.position = c(0.1, 0.8)) +
-#   geom_vline(data = events, aes(xintercept = as.numeric(event_date)), linetype = "dashed") +
-#   annotate("text", x = as.yearmon('Feb-2022', "%b-%Y"), y = Inf, label = "Russia-Ukraine War Start", vjust = 1, hjust = 1.1) +
-#   annotate("text", x = as.yearmon('Mar-2003', "%b-%Y"), y = Inf, label = "Iraq War Start", vjust = 1, hjust = 1.1) +
-#   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
 
+Over the years, oil pricing has been significantly influenced by key geopolitical moments. From conflicts to major geopolitical shifts, the plot sheds light on how world events send shockwaves through the oil market. Vertical dashed lines mark pivotal occasions, such as the onset of the Russia-Ukraine War in February 2022 and the Iraq War in March 2003, offering a clear visual of their immediate impact on oil prices. This visualization serves as a concise yet insightful exploration, illustrating the interconnected relationship between geopolitical happenings and the fluctuations in oil prices, unraveling the narrative of how the global stage shapes the cost of this vital resource.
 
 ## Tables
 

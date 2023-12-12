@@ -326,8 +326,10 @@ ggplot(oil_wrangled1, aes(x = date)) +
   theme_minimal() +
   theme(legend.position = c(0.1, 0.8)) +
   geom_vline(data = events, aes(xintercept = as.numeric(event_date)), linetype = "dashed") +
-  annotate("text", x = as.yearmon('Feb-2022', "%b-%Y"), y = Inf, label = "Russia-Ukraine War Start", vjust = 1, hjust = 1.1) +
-  annotate("text", x = as.yearmon('Mar-2003', "%b-%Y"), y = Inf, label = "Iraq War Start", vjust = 1, hjust = 1.1) +
+  geom_text(data = data.frame(label = "Russia-Ukraine War Start", x = as.numeric(as.Date('Feb-2022', "%b-%Y")), y = Inf), 
+            aes(x = x, y = y, label = label), vjust = 1, hjust = 1.1) +
+  geom_text(data = data.frame(label = "Iraq War Start", x = as.numeric(as.Date('Mar-2003', "%b-%Y")), y = Inf), 
+            aes(x = x, y = y, label = label), vjust = 1, hjust = 1.1) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 ```
@@ -643,7 +645,7 @@ Data Sources:
 
 “CPI Home.” U.S. Bureau of Labor Statistics, U.S. Bureau of Labor Statistics, www.bls.gov/cpi/. Accessed 5 Dec. 2023. 
 
-“PETROLEUM & OTHER LIQUIDS.” Spot Prices for Crude Oil and Petroleum Products, www.eia.gov/dnav/pet/pet_pri_spt_s1_m.htm. Accessed 11 Dec. 2023. 
+“PETROLEUM OTHER LIQUIDS.” Spot Prices for Crude Oil and Petroleum Products, www.eia.gov/dnav/pet/pet_pri_spt_s1_m.htm. Accessed 11 Dec. 2023. 
 
 
 Normal Sources: 
