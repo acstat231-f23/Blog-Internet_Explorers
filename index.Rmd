@@ -1,5 +1,5 @@
 ---
-title: "Analysing the Impact of War on Financial Markets and Trade"
+title: "Oil and Economics"
 author: "Ethan Van De Water, Maximo Gonzalez, Alex Nichols"
 date: "11/28/23"
 output:
@@ -250,22 +250,14 @@ OilExports <- read_excel(file_path_exports, skip=2)|>
   mutate(across(c(2:44), as.character)) |>
   pivot_longer(!Country, names_to = "Year", values_to = "Exports")
 
-#ImportsAndExports <- left_join(OilExports, OilImports, by = 'Exports')
 
 combined_df <- left_join(OilImports, OilExports, by = c("Country", "Year"))|>
   filter(Country!="Others") |>
-   mutate(Exports = as.numeric(Exports),
-         Imports = as.numeric(Imports),
+   mutate(
+          Exports = coalesce(as.numeric(Exports), 0),#replaces as 0 when there is no matches
+          Imports = coalesce(as.numeric(Imports), 0),
          Country = ifelse(Country == "United States", "USA", Country),
          Country = ifelse(Country == "United Kingdom", "UK", Country))
-
-
-
-
-
-monthlydata <- read.csv("data/MonthlyOil.csv") |>
-#filter(FLOW %in% c("TOTEXPSB", "TOTIMPSB"))
-filter(COUNTRY == "USA")
 
 
 world_map2 <- maps::map("world", plot = FALSE, fill = TRUE) |>
@@ -334,6 +326,31 @@ ggplot(world_import_export_map4, aes(geometry=geom, fill = Exports)) +
        , caption = "Source: Organization of the Petroleum Exporting Countries") +
   scale_fill_viridis(option = "magma", direction = -1) 
 ```
+
+
+## Import & Export Data Table
+
+Search this table to find discrete values for imports and exports of different nations and groups of nations. Individual years can also be searched. 
+
+```{r}
+combined_df %>%
+  select(Country, Year, Imports, Exports) %>%
+  datatable(
+    colnames = c("Country", "Year", "Imports", "Exports"),
+    filter = 'top',
+    options = list(
+      pagelength = 10,
+      autoWidth = TRUE,
+      columnDefs = list(
+        list(targets = c(1,2), searchable = TRUE),  # 2 is the index of the 'Year' column
+        list(targets = c(3,4), searchable = FALSE)  # Disable search for other columns
+      )
+    )
+  )
+```
+
+
+
 
 ## CPI Background 
 ```{r}
