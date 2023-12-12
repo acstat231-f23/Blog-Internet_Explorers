@@ -1,6 +1,6 @@
 ---
 title: "Analysing the Impact of War on Financial Markets and Trade"
-author: "Ethan Van De Water, Maximo Gonzalezß, Alex Nichols"
+author: "Ethan Van De Water, Maximo Gonzalez, Alex Nichols"
 date: "11/28/23"
 output:
  # rmdformats::readthedown:
@@ -199,7 +199,7 @@ word_counts <- combined_df |> #creates the counts, orders by descending
   arrange(desc(count))
 ```
 
-## Word Search 1
+## Word Search
 
 To begin our analysis, we sought out articles relating to a series of key words that are relevant to our topic of interest (oil). These articles were found through using a few different key word searches such as: "Israel-Gaza Conflict", "Global Macroeconomic Environment", "Economic Impact of war" and "How war impacts national economies". After performing these searches, we selected articles that had recent publication dates. We took care to include articles from different institutions such as Governments/National Banks, News Media groups, and high ranking individuals in the private sector. 
 
@@ -233,7 +233,7 @@ knitr::include_graphics("img/Jpowellspeech.webp")
 [Jerome Powell](https://www.federalreservehistory.org/people/jerome-h-powell) speaks on Raising the benchmark Fed Funds Rate
 
 
-## Where Does Oil Come From? Where Does it go to? {.tabset}
+## Importing & Exporting Nations {.tabset}
 
 The movement of oil across the globe is fascinating. Although some nations have the ability to be energy self-sufficient, much international trade still occurs. One group of nations that is often involved in the trade of oil is known as the Organization of the Petroleum Exporting Countries, or [OPEC](https://www.opec.org/opec_web/en/about_us/23.htm)(OPEC) for short. These nations engage in trade both with each other and with non-member nations. They do so with the goal of stabilizing the oil markets to ensure a consistent supply of petroleum to those who require it. The following visualizations show the volumes of crude oil imported and exported in two different years using spatial data. The units are in 1000s of barrels per day, where 1 barrel is roughly 42 US gallons. 
 
@@ -270,7 +270,6 @@ filter(COUNTRY == "USA")
 
 world_map2 <- maps::map("world", plot = FALSE, fill = TRUE) |>
   st_as_sf()
-class(world_map2) #creates an sf object
 
 world_import_export_map <- world_map2 |>
   left_join(combined_df, by = c("ID" = "Country")) |>
