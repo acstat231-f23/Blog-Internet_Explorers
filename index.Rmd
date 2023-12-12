@@ -28,6 +28,31 @@ library(stringr)
 library(plotly)
 library(dplyr)
 library(ggplot2)
+library(tidytext)
+library(wordcloud)
+library(textdata)
+library(tidyverse)
+library(rvest)
+library(httr)
+library(stringr)
+library(jsonlite)
+library(readxl)
+library(tm)
+library(tidytext)
+library(wordcloud)
+library(textdata)
+library(tidyverse)
+library(stringr)
+library(leaflet)
+library(tidygeocoder)
+library(sf)
+library(ggplot2)
+library(mapproj)
+library(maps)
+library(dplyr)
+library(viridis)
+library(purrr)
+
 ```
 
 # Intro
@@ -195,7 +220,7 @@ ggplot(data = Visual1Data, aes(x = fct_reorder(word, count), y = count, fill = c
 
 
 ```
-The output of this analysis gave us insight into the sentiment of the media, national governments, as well as the private sector. Obviously, an article from Bloomberg is going to be more likely to contain the words 'inflation' 'market' or 'economy' than an Emily Dickinson Poem, but seeing the other words that also appear frequently and viewing the output holistically still gives us a unique takeaway. That is: among all these economy related terms - oil also appears frequently in relation. 
+The output of this analysis gave us insight into the sentiment of the media, national governments, as well as the private sector. Obviously, an article from Bloomberg is going to be more likely to contain the words 'inflation' 'market' or 'economy' than an Emily Dickinson Poem, but seeing the other words that also appear in tandem with the aforementioned and viewing the output holistically still gives us a unique takeaway. That is: among all these economy related terms - oil is also a frequent. Thus, doing a deeper dive into how oil/energy fits into the macro environment has the potential to allow us to unearth new trends and make new discoveries. 
 
 (sources listed below)
 
@@ -283,29 +308,109 @@ plotly_object
 
 ## Further Exploration {.tabset}
 
-Uses subsection syntax to get the tabs. Looks cool I think
+The movement of oil across the globe is fascinating. Although some nations have the ability to be energy self-sufficient, much international trade still occurs. One group of nations that is often involved in the trade of oil is known as the Organization of the Petroleum Exporting Countries, or [OPEC](https://www.opec.org/opec_web/en/about_us/23.htm)(OPEC) for short. These nations engage in trade both with each other and with non-member nations. They do so with the goal of stabilizing the oil markets to ensure a consistent supply of petroleum to those who require it. The following visualizations show the volumes of crude oil imported and exported in two different years using spatial data. The units are in 1000s of barrels per day, where 1 barrel is roughly 42 US gallons. 
 
-### Oil (Interactive Visuzlization)
+```{r}
+file_path_imports <- "data/CrudeOilImports.xlsx"
 
-You can make a bulleted list like this:
+file_path_exports <- "data/CrudeOilExports.xlsx"
 
-* item 1
-* item 2
-* item 3
+OilImports <- read_excel(file_path_imports, skip=2) |>
+  mutate(across(c(2:44), as.character)) |>
+  pivot_longer(!Country, names_to = "Year", values_to = "Imports")
+
+OilExports <- read_excel(file_path_exports, skip=2)|>
+  mutate(across(c(2:44), as.character)) |>
+  pivot_longer(!Country, names_to = "Year", values_to = "Exports")
+
+#ImportsAndExports <- left_join(OilExports, OilImports, by = 'Exports')
+
+combined_df <- left_join(OilImports, OilExports, by = c("Country", "Year"))|>
+  filter(Country!="Others") |>
+   mutate(Exports = as.numeric(Exports),
+         Imports = as.numeric(Imports),
+         Country = ifelse(Country == "United States", "USA", Country),
+         Country = ifelse(Country == "United Kingdom", "UK", Country))
 
 
-### Trade (Network)
-
-
-You can make a numbered list like this
-
-1. First thing I want to say
-2. Second thing I want to say
-3. Third thing I want to say
 
 
 
+monthlydata <- read.csv("data/MonthlyOil.csv") |>
+#filter(FLOW %in% c("TOTEXPSB", "TOTIMPSB"))
+filter(COUNTRY == "USA")
 
+
+world_map2 <- maps::map("world", plot = FALSE, fill = TRUE) |>
+  st_as_sf()
+class(world_map2) #creates an sf object
+
+world_import_export_map <- world_map2 |>
+  left_join(combined_df, by = c("ID" = "Country")) |>
+  mutate(Exports = ifelse(is.na(Exports), 0, Exports), Imports = ifelse(is.na(Imports), 0, Imports))
+
+```
+
+
+### Oil Imports
+
+Looking at imports allows for one to see which nations rely on energy from other nations. China, India, and parts of western Europe stand out here. The US is a bit of a unique case, as it imports a similar amount of oil as it exports. This is for a multitude of reasons, but can be boiled down simply: even after shipping costs, it is often cheaper to purchase overseas oil than domestically produced oil. 
+
+```{r}
+world_import_export_map1 <- world_import_export_map |>
+  filter(Year=="2020")
+
+ggplot(world_import_export_map1, aes(geometry=geom, fill = Imports)) +
+  geom_sf() +
+  theme_void() +
+  labs(fill = "Imports (1000 b/d)"
+       , title = "Global Crude Imports (2020)"
+       , caption = "Source: OPEC") +
+  scale_fill_viridis(option = "magma", direction = -1) 
+
+
+world_import_export_map2 <- world_import_export_map |>
+  filter(Year=="2022")
+
+ggplot(world_import_export_map2, aes(geometry=geom, fill = Imports)) +
+  geom_sf() +
+  theme_void() +
+  labs(fill = "Imports (1000 b/d)"
+       , title = "Global Crude Imports (2022)"
+       , caption = "Source: OPEC") +
+  scale_fill_viridis(option = "magma", direction = -1) 
+```
+
+### Oil Exports
+
+On the exports side, things get more interesting. First, China has almost no exports, and is entirely dependent on other nations to fulfill its energy needs. Russia on the other hand, is a net-exporter (exports-imports). Notably, it appears that the amount of oil Russia exported decreased from 2020 to the year ending Dec-31 2022. A possible cause of this is the trade restrictions put on Russia as a result of their invasion of Ukraine in February of 2022. 
+```{r}
+world_import_export_map3 <- world_import_export_map |>
+  filter(Year=="2020")
+
+ggplot(world_import_export_map3, aes(geometry=geom, fill = Exports)) +
+  geom_sf() +
+  theme_void() +
+  labs(fill = "Exports (1000 b/d)"
+       , title = "Global Crude Exports (2020)"
+       , caption = "Source: Organization of the Petroleum Exporting Countries") +
+  scale_fill_viridis(option = "magma", direction = -1) 
+
+
+world_import_export_map4 <- world_import_export_map |>
+  filter(Year=="2022")
+
+ggplot(world_import_export_map4, aes(geometry=geom, fill = Exports)) +
+  geom_sf() +
+  theme_void() +
+  labs(fill = "Exports (1000 b/d)"
+       , title = "Global Crude Exports (2022)"
+       , caption = "Source: Organization of the Petroleum Exporting Countries") +
+  scale_fill_viridis(option = "magma", direction = -1) 
+```
+
+
+writing to test where this ends up
 
 ## Links 
 Examples and additional guidance are provided below. 
@@ -591,7 +696,10 @@ https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20ener
 
 https://www.dwenergygroup.com/what-is-the-connection-between-the-price-of-oil-and-inflation/#:~:text=The%20correlation%20of%20oil%20to%20the%20Consumer%20Price%20Index%20(CPI)&text=A%20surge%20in%20the%20prices%20of%20oil%20can%20increase%20the,passed%20on%20to%20their%20consumers.
 
-  
+https://www.opec.org/opec_web/en/
+
+https://www.nasdaq.com/articles/america-produces-enough-oil-to-meet-its-needs-so-why-do-we-import-crude#:~:text=That%20happens%20because%20of%20a,cheaper%20than%20domestically%2Dproduced%20crude.
+
 
 
  
