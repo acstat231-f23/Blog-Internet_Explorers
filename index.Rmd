@@ -32,6 +32,9 @@ library(ggplot2)
 
 # Intro
 
+The world runs on energy, and for the last 2 centuries, a major source of the worlds energy has been oil. Historically, it has been an incredibly profitable and necessary industry. Today, oil and gas provide [80%](https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20energy%20costs%2C%20driven%20by,energy%20in%20the%20United%20States.)80% of American energy, and provide >12 million American jobs. 
+
+
 The purpose of this blog is to analyze what institutions believe to be the most impactful effects of war, and inspect those arguments using supporting data and visualizations from a variety of sources. 
 
 
@@ -603,6 +606,9 @@ Data Sources:
 “CPI Home.” U.S. Bureau of Labor Statistics, U.S. Bureau of Labor Statistics, www.bls.gov/cpi/. Accessed 5 Dec. 2023. 
 
 
+Normal Sources: 
+
+https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20energy%20costs%2C%20driven%20by,energy%20in%20the%20United%20States.
 
 
   

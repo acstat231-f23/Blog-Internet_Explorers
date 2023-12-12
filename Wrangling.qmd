@@ -32,6 +32,20 @@ library(stringr)
 library(jsonlite)
 library(readxl)
 library(tm)
+library(tidytext)
+library(wordcloud)
+library(textdata)
+library(tidyverse)
+library(stringr)
+library(leaflet)
+library(tidygeocoder)
+library(sf)
+library(ggplot2)
+library(mapproj)
+library(maps)
+library(dplyr)
+library(viridis)
+library(purrr)
 
 ```
 
@@ -395,7 +409,16 @@ OilExports <- read_excel(file_path_exports, skip=2)|>
   mutate(across(c(2:44), as.character)) |>
   pivot_longer(!Country, names_to = "Year", values_to = "Exports")
 
-ImportsAndExports <- left_join(OilExports, OilImports, by = 'Country', 'Year')
+#ImportsAndExports <- left_join(OilExports, OilImports, by = 'Exports')
+
+combined_df <- left_join(OilImports, OilExports, by = c("Country", "Year"))|>
+  filter(Country!="Others") |>
+   mutate(Exports = as.numeric(Exports),
+         Imports = as.numeric(Imports),
+         Country = ifelse(Country == "United States", "USA", Country),
+         Country = ifelse(Country == "United Kingdom", "UK", Country))
+
+
 
 
 
@@ -404,6 +427,30 @@ monthlydata <- read.csv("data/MonthlyOil.csv") |>
 filter(COUNTRY == "USA")
 
 
+world_map2 <- maps::map("world", plot = FALSE, fill = TRUE) |>
+  st_as_sf()
+class(world_map2) #creates an sf object
+
+world_import_export_map <- world_map2 %>%
+  left_join(combined_df, by = c("ID" = "Country")) %>%
+  mutate(Exports = ifelse(is.na(Exports), 0, Exports), Imports = ifelse(is.na(Imports), 0, Imports))|>
+  filter(Year == "2020") 
+
+ggplot(world_import_export_map, aes(geometry=geom, fill = Imports)) +
+  geom_sf() +
+  theme_void() +
+  labs(fill = "Imports (1000 b/d)"
+       , title = "Global Crude Imports (2020)"
+       , caption = "Source: OPEC") +
+  scale_fill_viridis(option = "magma", direction = -1) 
+
+ggplot(world_import_export_map, aes(geometry=geom, fill = Exports)) +
+  geom_sf() +
+  theme_void() +
+  labs(fill = "Exports (1000 b/d)"
+       , title = "Global Crude Exports (2020)"
+       , caption = "Source: Organization of the Petroleum Exporting Countries") +
+  scale_fill_viridis(option = "magma", direction = -1) 
 
 
 ```
