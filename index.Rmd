@@ -469,6 +469,10 @@ to discover the complexity and volatility of the global market for the commodity
 
 Fortunately, when we were conducting our project we did not have much difficulty finding data. The oil industry is well regulated by government organizations and because it is such a valuable industry at the global scale, it is advantageous for companies and groups to collect lots of data. The majority of our quantitative data came from government websites, or international organizations such as OPEC. We also used text as data, which was easily accessible. 
 
+During our analysis, we explored which countries export/import the most oil, what oil prices have looked like over time, and tried to connect the prices of oil to the consumer price index for American Consumers. Our visualizations for exports/imports and oil prices were straight forward and easy to interpret. We ran into trouble when attempting to connect oil prices and CPI. This is where our analysis is most limited. We cannot make any concrete statements about the connections between them. Companies have entire business units delegated to the task of predicting how input prices will impact overall costs, and we did not have the tools nor the data to create a proper predictive model of any significance. However, we did our best to explain the issue we had within the given context
+
+If we had to continue our exploration of the oil industry, there are a few areas that would be interesting to explore. One, if we were able to find data on exactly where oil is imported from/exported to, a network could be created. This would be a very cool way to showcase exactly where oil comes from, and where it goes. We could possibly also find data on shipping lanes and see, similar to flight patterns, what paths those massive container ships take when traversing oceans. Next, getting a more concrete idea of what goes into the CPI and possibly interviewing someone who has more knowledge on it than us would provide useful context for the reader. Lastly, doing an investigation into where energy is going in the future. Oil is a non-renewable source of energy, and governments are doing everything they can to prevent the continued use of fossil fuels globally and slow the effects of climate change. Looking at things like carbon credits, wind/solar energy, and nuclear energy would be cool avenues to look at in the future. 
+
 # References
 
 
@@ -483,7 +487,6 @@ The following citations are based on the American Statistical Association citati
 
 <!-- Textbook -->
 Baumer, B. S., Kaplan, D. T., and Horton, N. J. (2021), *Modern Data Science with R* (2nd ed.), Boca Raton, FL: CRC Press.
-
 
 <!-- Journal article -->
 McNamara, A. and Horton N. J. (2018) "Wrangling Categorical Data in R," *The American Statistician*, 72:1, 97-104, doi: [10.1080/00031305.2017.1356375](https://doi.org/10.1080/00031305.2017.1356375).
