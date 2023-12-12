@@ -32,7 +32,9 @@ library(ggplot2)
 
 # Intro
 
-The world runs on energy, and for the last 2 centuries, a major source of the worlds energy has been oil. Historically, it has been an incredibly profitable and necessary industry. Today, oil and gas provide [80%](https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20energy%20costs%2C%20driven%20by,energy%20in%20the%20United%20States.)80% of American energy, and provide >12 million American jobs. 
+The world runs on energy, and for the last 2 centuries, a major source of the worlds energy has been oil. Historically, it has been an incredibly profitable and necessary industry. Today, oil and gas provide [80%](https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20energy%20costs%2C%20driven%20by,energy%20in%20the%20United%20States.) of American energy, and provide >12 million American jobs. A similar trend is followed globally, with few exceptions. As a result of the prominence of oil and gas within each nation-state's energy consumption profile, it is a sought after commodity. Many conflicts both historically and currently revolve around, or have implications relating to access to energy resources. A period specific example would be the most recent outbreak of the Russia-Ukraine war, beginning in February 2022. As a result of the re-kindling of this conflict, many European nations that were formerly served by russian oil/gas had to find new sources of energy, as it was no longer an option to purchase from Russia given the nation's encroachment upon sovereignty. 
+
+This blog will provide further analysis of the impact that certain global conflicts have on the cost of energy for different countries, passed on by the increasing cost of crude oil on publicly listed exchanges. 
 
 
 The purpose of this blog is to analyze what institutions believe to be the most impactful effects of war, and inspect those arguments using supporting data and visualizations from a variety of sources. 
