@@ -199,7 +199,7 @@ word_counts <- combined_df |> #creates the counts, orders by descending
   arrange(desc(count))
 ```
 
-## Visualization 1
+## Word Search 1
 
 To begin our analysis, we sought out articles relating to a series of key words that are relevant to our topic of interest (oil). These articles were found through using a few different key word searches such as: "Israel-Gaza Conflict", "Global Macroeconomic Environment", "Economic Impact of war" and "How war impacts national economies". After performing these searches, we selected articles that had recent publication dates. We took care to include articles from different institutions such as Governments/National Banks, News Media groups, and high ranking individuals in the private sector. 
 
@@ -464,7 +464,6 @@ The [**DT** package](https://rstudio.github.io/DT/) is great for making dynamic 
 
 
 ```{r dt-example, message=FALSE, echo=TRUE}
-
 
 OilExports%>%
   select(Country,Year,Exports)|>
