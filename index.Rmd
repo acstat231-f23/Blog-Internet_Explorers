@@ -32,28 +32,11 @@ library(ggplot2)
 
 # Intro
 
-The world runs on energy, and for the last 2 centuries, a major source of the worlds energy has been oil. Historically, it has been an incredibly profitable and necessary industry. Today, oil and gas provide [80%](https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20energy%20costs%2C%20driven%20by,energy%20in%20the%20United%20States.) of American energy, and provide >12 million American jobs. A similar trend is followed globally, with few exceptions. As a result of the prominence of oil and gas within each nation-state's energy consumption profile, it is a sought after commodity. Many conflicts both historically and currently revolve around, or have implications relating to access to energy resources. A period specific example would be the most recent outbreak of the Russia-Ukraine war, beginning in February 2022. As a result of the re-kindling of this conflict, many European nations that were formerly served by russian oil/gas had to find new sources of energy, as it was no longer an option to purchase from Russia given the nation's encroachment upon sovereignty. 
+The world runs on energy, and for the last 2 centuries, a major source of the worlds energy has been oil. Historically, it has been an incredibly profitable and necessary industry. Today, oil and gas provide [80%](https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20energy%20costs%2C%20driven%20by,energy%20in%20the%20United%20States.) of American energy, and provide >12 million American jobs. A similar trend is followed globally, with few exceptions. As a result of the prominence of oil and gas within each nation-state's energy consumption profile, it is a sought after commodity. Many conflicts both historically and currently revolve around, or have implications relating to access to energy resources. A period specific example would be the most recent outbreak of the Russia-Ukraine war, beginning in February 2022. As a result of the re-kindling of this conflict, many European nations that were formerly served by Russian oil/gas had to find new sources of energy, as it was no longer an option to purchase from Russia given the nation's encroachment upon sovereignty. 
 
-This blog will provide further analysis of the impact that certain global conflicts have on the cost of energy for different countries, passed on by the increasing cost of crude oil on publicly listed exchanges. 
-
-
-The purpose of this blog is to analyze what institutions believe to be the most impactful effects of war, and inspect those arguments using supporting data and visualizations from a variety of sources. 
-
+This blog will provide further analysis of the impact that global conflicts have on the movement of energy resources, the price of energy resources, and the subsequent increases of prices for consumers.
 
 # Content
-
-You can include text, `code`, and output as usual. Remember to take full advantage of Markdown and follow our [Style Guide](https://acstat231-f22.github.io/home/style-guide.html#Text_narration).
-
-```{r ggplot-example, fig.align="left", out.width="100%"}
-# ggplot(data = cars, aes(x = speed, y = dist)) + 
-#   geom_point() + 
-#   labs(x = "Speed of car (mph)",
-#        y = "Distance taken to stop (ft)",
-#        title = "Stopping distance increases with faster speeds",
-#        subtitle = "Based on 1920s study") +
-#   theme_classic()
-```
-
 
 ```{r fig.align="left", out.width="100%"}
 
@@ -191,8 +174,7 @@ word_counts <- combined_df |> #creates the counts, orders by descending
 
 ## Visualization 1
 
-To begin our analysis, we sought out articles relating to a series of key words that are relevant to our topic of interest. These articles were found through using a few different key word searches such as: "Israel-Gaza Conflict", "Global Macroeconomic Environment", "Economic Impact of war" and "How war impacts national economies". After performing these searches, we selected articles that had relevant publication dates for our analysis window (early 2022-present). We were sure to include text from different instutions such as Governments/National Banks, News Media groups, and high ranking individuals in the private sector. 
-
+To begin our analysis, we sought out articles relating to a series of key words that are relevant to our topic of interest (oil). These articles were found through using a few different key word searches such as: "Israel-Gaza Conflict", "Global Macroeconomic Environment", "Economic Impact of war" and "How war impacts national economies". After performing these searches, we selected articles that had recent publication dates. We took care to include articles from different institutions such as Governments/National Banks, News Media groups, and high ranking individuals in the private sector. 
 
 ```{r fig.align="left", out.width="100%"}
 Visual1Data <- word_counts |>
@@ -213,7 +195,7 @@ ggplot(data = Visual1Data, aes(x = fct_reorder(word, count), y = count, fill = c
 
 
 ```
-We selected a series of articles from different institutions (Banks, Government, News & Media) that had titles relating to current international conflicts and economic sentiment. This word frequency analysis helped us decide where we should target our further analysis to explore the impact that war has on the global macro environment. Among this list: Oil, prices, and inflation were of great interest. 
+The output of this analysis gave us insight into the sentiment of the media, national governments, as well as the private sector. Obviously, an article from Bloomberg is going to be more likely to contain the words 'inflation' 'market' or 'economy' than an Emily Dickinson Poem, but seeing the other words that also appear frequently and viewing the output holistically still gives us a unique takeaway. That is: among all these economy related terms - oil also appears frequently in relation. 
 
 (sources listed below)
 
@@ -566,11 +548,6 @@ The following citations are based on the American Statistical Association citati
 <!-- Textbook -->
 Baumer, B. S., Kaplan, D. T., and Horton, N. J. (2021), *Modern Data Science with R* (2nd ed.), Boca Raton, FL: CRC Press.
 
-<!-- Journal article -->
-Broman, K. W. and Woo, K. H. (2018), "Data Organization in Spreadsheets," *The American Statistician*, 72:1, 2-10, doi: [10.1080/00031305.2017.1375989](https://doi.org/10.1080/00031305.2017.1375989)
-
-<!-- Website -->
-Columbia University Libraries (n.d.), "Data Citation," available at <https://guides.library.columbia.edu/datacitation>.
 
 <!-- Journal article -->
 McNamara, A. and Horton N. J. (2018) "Wrangling Categorical Data in R," *The American Statistician*, 72:1, 97-104, doi: [10.1080/00031305.2017.1356375](https://doi.org/10.1080/00031305.2017.1356375).
@@ -608,10 +585,11 @@ Data Sources:
 “CPI Home.” U.S. Bureau of Labor Statistics, U.S. Bureau of Labor Statistics, www.bls.gov/cpi/. Accessed 5 Dec. 2023. 
 
 
-Normal Sources: 
+Normal Sources: (Need Conversion to MLA Format)
 
 https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20energy%20costs%2C%20driven%20by,energy%20in%20the%20United%20States.
 
+https://www.dwenergygroup.com/what-is-the-connection-between-the-price-of-oil-and-inflation/#:~:text=The%20correlation%20of%20oil%20to%20the%20Consumer%20Price%20Index%20(CPI)&text=A%20surge%20in%20the%20prices%20of%20oil%20can%20increase%20the,passed%20on%20to%20their%20consumers.
 
   
 
