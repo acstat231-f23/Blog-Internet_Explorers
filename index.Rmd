@@ -234,7 +234,7 @@ Federal Reserve Chair [Jerome Powell](https://www.federalreservehistory.org/peop
 
 ## Importing & Exporting Nations {.tabset}
 
-The movement of oil across the globe is fascinating. Although some nations have the ability to be energy self-sufficient, much international trade still occurs. One group of nations that is often involved in the trade of oil is known as the Organization of the Petroleum Exporting Countries, or [OPEC](https://www.opec.org/opec_web/en/about_us/23.htm)(OPEC) for short. These nations engage in trade both with each other and with non-member nations. They do so with the goal of stabilizing the oil markets to ensure a consistent supply of petroleum to those who require it. The following visualizations show the volumes of crude oil imported and exported in two different years using spatial data. The units are in 1000s of barrels per day, where 1 barrel is roughly 42 US gallons. 
+The movement of oil across the globe is fascinating. Although some nations have the ability to be energy self-sufficient, much international trade still occurs. One group of nations that is often involved in the trade of oil is known as the Organization of the Petroleum Exporting Countries, or [(OPEC)](https://www.opec.org/opec_web/en/about_us/23.htm) for short. These nations engage in trade both with each other and with non-member nations. They do so with the goal of stabilizing the oil markets to ensure a consistent supply of petroleum to those who require it. The following visualizations show the volumes of crude oil imported and exported in two different years using spatial data. The units are in 1000s of barrels per day, where 1 barrel is roughly 42 US gallons. 
 
 ```{r}
 file_path_imports <- "data/CrudeOilImports.xlsx"
@@ -282,7 +282,7 @@ ggplot(world_import_export_map1, aes(geometry=geom, fill = Imports)) +
   theme_void() +
   labs(fill = "Imports (1000 b/d)"
        , title = "Global Crude Imports (2020)"
-       , caption = "Source: OPEC") +
+       , caption = "Source: Organization of the Petroleum Exporting Countries") +
   scale_fill_viridis(option = "magma", direction = -1) 
 
 
@@ -294,7 +294,7 @@ ggplot(world_import_export_map2, aes(geometry=geom, fill = Imports)) +
   theme_void() +
   labs(fill = "Imports (1000 b/d)"
        , title = "Global Crude Imports (2022)"
-       , caption = "Source: OPEC") +
+       , caption = "OPEC") +
   scale_fill_viridis(option = "magma", direction = -1) 
 ```
 
@@ -322,14 +322,14 @@ ggplot(world_import_export_map4, aes(geometry=geom, fill = Exports)) +
   theme_void() +
   labs(fill = "Exports (1000 b/d)"
        , title = "Global Crude Exports (2022)"
-       , caption = "Source: Organization of the Petroleum Exporting Countries") +
+       , caption = "OPEC") +
   scale_fill_viridis(option = "magma", direction = -1) 
 ```
 
 
 ## Import & Export Data Table
 
-Search this table to find discrete values for imports and exports of different nations and groups of nations. Individual years can also be searched. 
+Search this table to find discrete values for imports and exports of different nations and groups of nations. Individual years can also be searched. The units for imports/exports are 1000 b/d (thousands of barrels per day).
 
 ```{r}
 combined_df %>%
@@ -476,28 +476,7 @@ If we had to continue our exploration of the oil industry, there are a few areas
 # References
 
 
-
-Typically, references in R Markdown (and LaTeX) files are [incorporated with a BibTeX database](https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html) (a .bib file). You can try this approach or  manually include either a numbered or alphabetized list. 
-
-You can list R package citations with the code `citation("packageName")` in the console and then copy (and reformat as needed) the relevant text, e.g.,
-
-
-The following citations are based on the American Statistical Association citation style (not all of these references are used in this document).:
-
-
-<!-- Textbook -->
-Baumer, B. S., Kaplan, D. T., and Horton, N. J. (2021), *Modern Data Science with R* (2nd ed.), Boca Raton, FL: CRC Press.
-
-<!-- Journal article -->
-McNamara, A. and Horton N. J. (2018) "Wrangling Categorical Data in R," *The American Statistician*, 72:1, 97-104, doi: [10.1080/00031305.2017.1356375](https://doi.org/10.1080/00031305.2017.1356375).
-
-<!-- Dataset -->
-Shah, Syed A. A. (October 2022), "Starbucks Drinks" (Version 1), *Kaggle*, available at <https://www.kaggle.com/datasets/syedasimalishah/starbucks-drinks>.
-
-<!-- R package -->
-Xie Y, Cheng J, Tan X (2022). "DT: A Wrapper of the JavaScript Library 'DataTables'," R package version 0.24, available at <https://CRAN.R-project.org/package=DT>.
-
-Article Sources:
+Sources:
 
 Ma, Dorothy, and Alice Huang. “Evergrande under Pressure in Hong Kong Court to Repay Creditors.” Bloomberg.Com, Bloomberg, 28 Nov. 2023, www.bloomberg.com/news/features/2023-11-28/evergrande-under-pressure-in-hong-kong-court-to-repay-creditors. 
 
@@ -519,23 +498,14 @@ Smith, Elliot. “Goldman Sachs Says the Israel-Hamas War Could Have Major Impli
 
 Rappeport, Alan, and Patricia Cohen. “Fragile Global Economy Faces New Crisis in Israel-Gaza War.” The New York Times, The New York Times, 10 Oct. 2023, www.nytimes.com/2023/10/10/business/economy/global-economy-israel-gaza-war.html. 
 
-Data Sources: 
-
 “CPI Home.” U.S. Bureau of Labor Statistics, U.S. Bureau of Labor Statistics, www.bls.gov/cpi/. Accessed 5 Dec. 2023. 
 
+The Economic Benefits of Oil &amp; Gas - Department of Energy, www.energy.gov/articles/economic-impact-oil-and-gas. Accessed 12 Dec. 2023. 
 
-Normal Sources: (Need Conversion to MLA Format)
+“What Is the Connection between the Price of Oil and Inflation?” DW Energy Group, 19 Jan. 2023, www.dwenergygroup.com/what-is-the-connection-between-the-price-of-oil-and-inflation/#:~:text=The%20correlation%20of%20oil%20to%20the%20Consumer%20Price%20Index%20(CPI)&amp;text=A%20surge%20in%20the%20prices%20of%20oil%20can%20increase%20the,passed%20on%20to%20their%20consumers. 
 
-https://www.energy.gov/articles/economic-impact-oil-and-gas#:~:text=Lower%20energy%20costs%2C%20driven%20by,energy%20in%20the%20United%20States.
+“OPEC” OPEC, www.opec.org/opec_web/en/. Accessed 12 Dec. 2023. 
 
-https://www.dwenergygroup.com/what-is-the-connection-between-the-price-of-oil-and-inflation/#:~:text=The%20correlation%20of%20oil%20to%20the%20Consumer%20Price%20Index%20(CPI)&text=A%20surge%20in%20the%20prices%20of%20oil%20can%20increase%20the,passed%20on%20to%20their%20consumers.
-
-https://www.opec.org/opec_web/en/
-
-https://www.nasdaq.com/articles/america-produces-enough-oil-to-meet-its-needs-so-why-do-we-import-crude#:~:text=That%20happens%20because%20of%20a,cheaper%20than%20domestically%2Dproduced%20crude.
-
-
-
- 
+Martin, Tillier. “America Produces Enough Oil to Meet Its Needs, so Why Do We Import Crude?” Nasdaq, www.nasdaq.com/articles/america-produces-enough-oil-to-meet-its-needs-so-why-do-we-import-crude#:~:text=That%20happens%20because%20of%20a,cheaper%20than%20domestically%2Dproduced%20crude. Accessed 12 Dec. 2023. 
 
 
