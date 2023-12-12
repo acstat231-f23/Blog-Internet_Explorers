@@ -52,6 +52,8 @@ library(maps)
 library(dplyr)
 library(viridis)
 library(purrr)
+library(zoo)
+library(DT)
 
 ```
 
@@ -230,83 +232,8 @@ knitr::include_graphics("img/Jpowellspeech.webp")
 ```
 [Jerome Powell](https://www.federalreservehistory.org/people/jerome-h-powell) speaks on Raising the benchmark Fed Funds Rate
 
-## Visualization 2
 
-```{r}
-file_path <- "data/CPIdata.csv"
-
-# Read CSV data into a data frame
-cpi_dataset <- read.csv(file_path)
-
-month_renaming<- c(
-  M01 = "January",
-  M02 = "February",
-  M03 = "March",
-  M04 = "April",
-  M05 = "May",
-  M06 = "June",
-  M07 = "July",
-  M08 = "August",
-  M09 = "September",
-  M10 = "October",
-  M11 = "November",
-  M12 = "December"
-)
-
-month_mapping <- c(
-  "January" = 1,
-  "February" = 2,
-  "March" = 3,
-  "April" = 4,
-  "May" = 5,
-  "June" = 6,
-  "July" = 7,
-  "August" = 8,
-  "September" = 9,
-  "October" = 10,
-  "November" = 11,
-  "December" = 12
-)
-
-
-cpi_dataset <- cpi_dataset %>%
-  mutate(Month = month_renaming[Period]) |> #create month column
-   mutate(Month = match(Month, names(month_mapping)), #create date column with month column
-         Date = as.Date(paste(Year, Month, "01", sep = "-"), format = "%Y-%m-%d"))
-
-
-# ggplot(cpi_dataset, aes(x = Date, y = Value)) +
-#   geom_line() +
-#   labs(title = "CPI Chart", x = "Date", y = "CPI") +
-#   theme_minimal()
-
-CPIplot <- ggplot(cpi_dataset, aes(x = Date, y = Value)) +
-  geom_point()+
-  geom_line() +
-  labs(title = "CPI From 2017-Present", x = "Date", y = "CPI") +
-  theme_minimal() + 
-  geom_vline(xintercept = as.Date("2022-02-01"), linetype = "dashed", color = "red") +
-  geom_vline(xintercept = as.Date("2023-10-01"), linetype = "dashed", color = "blue") +
-  geom_text(data = cpi_dataset %>% filter(Date == as.Date("2022-02-01")), 
-            aes(x = as.Date("2022-02-01"), y = Value, label = "Russia Invades Ukraine"),
-            vjust = -0.5, color = "red") +
-  geom_text(data = cpi_dataset %>% filter(Date == as.Date("2023-10-01")), 
-            aes(x = as.Date("2023-10-01"), y = Value, label = "Israel/Gaza"),
-            vjust = -0.5, color = "blue")
-
-# Convert ggplot to plotly
-plotly_object <- ggplotly(CPIplot)
-
-# Display the interactive plot
-plotly_object
-
-
-```
-
-[CPI](https://www.bls.gov/cpi/) (Consumer Price Index) is the average price paid by a consumer for a "basket" of consumer goods. Here, we are looking at the CPI for a U.S. consumer from 2017-2022. CPI is also used as an indicator for inflation. The purpose of this plot is to provide some context for the further analysis that will be performed. The CPI has increased steadily over time, but we are interested in seeing if in recent years, global conflicts were drivers of that increase. 
-
-
-## Further Exploration {.tabset}
+## Where Does Oil Come From? Where Does it go to? {.tabset}
 
 The movement of oil across the globe is fascinating. Although some nations have the ability to be energy self-sufficient, much international trade still occurs. One group of nations that is often involved in the trade of oil is known as the Organization of the Petroleum Exporting Countries, or [OPEC](https://www.opec.org/opec_web/en/about_us/23.htm)(OPEC) for short. These nations engage in trade both with each other and with non-member nations. They do so with the goal of stabilizing the oil markets to ensure a consistent supply of petroleum to those who require it. The following visualizations show the volumes of crude oil imported and exported in two different years using spatial data. The units are in 1000s of barrels per day, where 1 barrel is roughly 42 US gallons. 
 
@@ -409,40 +336,123 @@ ggplot(world_import_export_map4, aes(geometry=geom, fill = Exports)) +
   scale_fill_viridis(option = "magma", direction = -1) 
 ```
 
+## CPI Backgorund 
+```{r}
+file_path <- "data/CPIdata.csv"
 
-writing to test where this ends up
+# Read CSV data into a data frame
+cpi_dataset <- read.csv(file_path)
 
-## Links 
-Examples and additional guidance are provided below. 
+month_renaming<- c(
+  M01 = "January",
+  M02 = "February",
+  M03 = "March",
+  M04 = "April",
+  M05 = "May",
+  M06 = "June",
+  M07 = "July",
+  M08 = "August",
+  M09 = "September",
+  M10 = "October",
+  M11 = "November",
+  M12 = "December"
+)
 
-Take note of the the default code chunk options in the `setup` code chunk. For example, unlike the rest of the Rmd files we worked in this semester, the default code chunk option is `echo = FALSE`, so you will need to set `echo  = TRUE` for any code chunks you would like to display in the blog. You should be thoughtful and intentional about the code you choose to display. 
+month_mapping <- c(
+  "January" = 1,
+  "February" = 2,
+  "March" = 3,
+  "April" = 4,
+  "May" = 5,
+  "June" = 6,
+  "July" = 7,
+  "August" = 8,
+  "September" = 9,
+  "October" = 10,
+  "November" = 11,
+  "December" = 12
+)
 
 
-You can include [links](https://www.datadreaming.org/post/r-markdown-theme-gallery/) using Markdown syntax as shown. 
+cpi_dataset <- cpi_dataset %>%
+  mutate(Month = month_renaming[Period]) |> #create month column
+   mutate(Month = match(Month, names(month_mapping)), #create date column with month column
+         Date = as.Date(paste(Year, Month, "01", sep = "-"), format = "%Y-%m-%d"))
 
-You should include links to relevant sites as you write. You should additionally include a list of references as the end of your blog with full citations (and relevant links).
+
+# ggplot(cpi_dataset, aes(x = Date, y = Value)) +
+#   geom_line() +
+#   labs(title = "CPI Chart", x = "Date", y = "CPI") +
+#   theme_minimal()
+
+ggplot(cpi_dataset, aes(x = Date, y = Value)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "CPI From 2017-Present", x = "Date", y = "CPI") +
+  theme_minimal() +
+  geom_vline(xintercept = as.Date("2022-02-01") - 5, linetype = "dashed", color = "red") +  # Adjusted the offset
+  geom_vline(xintercept = as.Date("2023-10-01") - 5, linetype = "dashed", color = "blue") +  # Adjusted the offset
+  geom_text(data = cpi_dataset %>% filter(Date == as.Date("2022-02-01")), 
+            aes(x = as.Date("2022-02-01") - 5, y = Value, label = "Russia Invades Ukraine"),
+            vjust = -0.5, hjust = 1.0, color = "red") +
+  geom_text(data = cpi_dataset %>% filter(Date == as.Date("2023-10-01")), 
+            aes(x = as.Date("2023-10-01") - 5, y = Value, label = "Israel/Gaza"),
+            vjust = -0.5, hjust = 1.1, color = "blue") +
+  theme(legend.position = c(0.1, 0.8))  # Adjust legend position to match the oil pricing plot
+
+```
+[CPI](https://www.bls.gov/cpi/) (Consumer Price Index) is the average price paid by a consumer for a "basket" of consumer goods. Here, we are looking at the CPI for a U.S. consumer from 2017-2022. CPI is also used as an indicator for inflation. The purpose of this plot is to provide some context for the further analysis that will be performed. The CPI has increased steadily over time, but we are interested in seeing if in recent years, global conflicts were drivers of that increase. 
 
 
-## Visualizations 
+## Oil Pricing 
 
-Visualizations, particularly interactive ones, will be well-received. That said, do not overuse visualizations. You may be better off with one complicated but well-crafted visualization as opposed to many quick-and-dirty plots. Any plots should be well-thought-out, properly labeled, informative, and visually appealing.
+```{r}
+oil_pricing_import <- read_excel("data/Oil Pricing.XLSX")
 
-If you want to include dynamic visualizations or tables, you should explore your options from packages that are built from [**htmlwidgets**](https://www.htmlwidgets.org/showcase_leaflet.html). These **htmlwidgets**-based packages offer ways to build lighterweight, dynamic visualizations or tables that don't require an R server to run! A more complete list of packages is available on the linked website, but a short list includes:
 
-* [**plotly**](https://plot.ly/r/): Interactive graphics with D3
-* [**leaflet**](https://rstudio.github.io/leaflet/): Interactive maps with OpenStreetMap
-* [**dygraphs**](http://rstudio.github.io/dygraphs): Interactive time series visualization
-* [**visNetwork**](http://dataknowledge.github.io/visNetwork): Network graph visualization vis.js
-* [**sparkline**](https://github.com/htmlwidgets/sparkline): Small inline charts
-* [**threejs**](https://github.com/bwlewis/rthreejs): Interactive 3D graphics
-    
-You may embed a published Shiny app in your blog if useful, but be aware that there is a limited window size for embedded objects, which tends to makes the user experience of the app worse relative to a dedicated Shiny app page. Additionally, Shiny apps will go idle after a few minutes and have to be reloaded by the user, which may also affect the user experience. 
 
-Any Shiny apps embedded in your blog should be accompanied by the link to the published Shiny app (I did this using a figure caption in the code chunk below, but you don't have to incorporate the link in this way).
+oil_wrangled1 <- oil_pricing_import %>%
+  select(date, US_pricing, europe_pricing, month, year)
 
-```{r ds-salaries-app, out.width = "100%", out.extra = 'data-external="1" frameborder="no"', fig.cap = "[Data Science Salaries Shiny App](https://bebailey.shinyapps.io/data-science-salaries)"}
-knitr::include_app("https://bebailey.shinyapps.io/data-science-salaries",
-                   height = "500px")
+oil_wrangled1$date <- as.yearmon(oil_wrangled1$date, "%b-%Y")
+
+oil_wrangled1 <- oil_wrangled1 %>%
+  drop_na()
+
+events <- data.frame(
+  event_date = as.yearmon(c('Feb-2022', 'Mar-2003'), "%b-%Y"),
+  event_label = c('Russia-Ukraine War Start', 'Iraq War Start')
+)
+
+
+
+# ggplot(oil_wrangled1, aes(x = date)) +
+#   geom_line(aes(y = US_pricing, color = "US Pricing"), linewidth = 1) +  
+#   geom_line(aes(y = europe_pricing, color = "Europe Pricing"), linewidth = 1) +  
+#   labs(title = "Oil Pricing Over Time", x = "Date", y = "Pricing") +
+#   scale_color_manual(values = c("US Pricing" = "blue", "Europe Pricing" = "red")) +
+#   theme_minimal() +
+#   theme(legend.position = c(0.1, 0.8)) +
+#   geom_vline(data = events, aes(xintercept = as.numeric(event_date)), linetype = "dashed") +
+#   annotate("text", x = as.yearmon('Feb-2022', "%b-%Y"), y = Inf, label = "Russia-Ukraine War Start", vjust = 1, hjust = 1.1) +
+#   annotate("text", x = as.yearmon('Mar-2003', "%b-%Y"), y = Inf, label = "Iraq War Start", vjust = 1, hjust = 1.1) +
+#   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+
+
+```{r}
+
+# ggplot(oil_wrangled1, aes(x = date)) +
+#   geom_line(aes(y = US_pricing, color = "US Pricing"), linewidth = 1) +
+#   geom_line(aes(y = europe_pricing, color = "Europe Pricing"), linewidth = 1) +
+#   labs(title = "Oil Pricing Over Time", x = "Date", y = "Pricing") +
+#   scale_color_manual(values = c("US Pricing" = "blue", "Europe Pricing" = "red")) +
+#   theme_minimal() +
+#   theme(legend.position = c(0.1, 0.8)) +
+#   geom_vline(data = events, aes(xintercept = as.numeric(event_date)), linetype = "dashed") +
+#   annotate("text", x = as.yearmon('Feb-2022', "%b-%Y"), y = Inf, label = "Russia-Ukraine War Start", vjust = 1, hjust = 1.1) +
+#   annotate("text", x = as.yearmon('Mar-2003', "%b-%Y"), y = Inf, label = "Iraq War Start", vjust = 1, hjust = 1.1) +
+#   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
 
 
@@ -452,108 +462,20 @@ knitr::include_app("https://bebailey.shinyapps.io/data-science-salaries",
 
 The [**DT** package](https://rstudio.github.io/DT/) is great for making dynamic tables that can be displayed, searched, and filtered by the user without needing an R server or Shiny app!
 
-Note: you should load any packages you use in the `setup` code chunk as usual. The `library()` functions are shown below just for demonstration.
 
 ```{r dt-example, message=FALSE, echo=TRUE}
-library(DT)
-mtcars %>% 
-  select(mpg, cyl, hp) %>% 
-  datatable(colnames = c("MPG", "Number of cylinders", "Horsepower"),
+
+
+OilExports%>%
+  select(Country,Year,Exports)|>
+  datatable(colnames = c("Country","Year","Exports"),
             filter = 'top',
-            options = list(pageLength = 10, autoWidth = TRUE))
+            options = list(pagelength=10, autoWidth=TRUE))
 ```
-
-### **kableExtra** package
-
-You can also use [**kableExtra**](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html) for customizing HTML tables.
-
-```{r kable-example, echo=TRUE, message=FALSE}
-library(kableExtra)
-summary(cars) %>%
-  kbl(col.names = c("Speed", "Distance"),
-      row.names = FALSE) %>%
-  kable_styling(bootstrap_options = "striped",
-                full_width = FALSE) %>%
-  row_spec(0, bold = TRUE) %>%
-  column_spec(1:2, width = "1.5in") 
-```
-
-
-## Images
-
-Images and gifs can be displayed using code chunks:
-
-```{r, fig.cap='"Safe Space" by artist Kenesha Sneed', out.width="80%", fig.align="center"}
-knitr::include_graphics("img/Kenesha-Sneed_safe-space.jpeg")
-```
-
-
-```{r, fig.cap="This is a figure caption", out.width="50%", fig.align="center"}
-knitr::include_graphics("https://media.giphy.com/media/H7ZrrA9V2pd3Tehdds/giphy.gif")
-```
-
-You may also use Markdown syntax for displaying images as shown below, but code chunks offer easier customization of the image size and alignment.
-
-![This is another figure caption](https://media.giphy.com/media/8i5IvxP9ZLgmjXN1BF/giphy.gif)
-
-Either way, the file path can be a local path within your project directory or a URL for an image hosted online. This syntax works for PNG, PDF, JPG, and even GIF formats.
-
-
-## Videos
-
-You can use code chunks or Markdown syntax include links to any valid YouTube or Vimeo URLs (see [here](https://bookdown.org/yihui/rmarkdown/learnr-videos.html) for details) or point to a location within your project directory. 
-
-Code chunk:
-
-```{r, out.width="80%", fig.align="center"}
-knitr::include_url("https://www.youtube.com/watch?v=up8ODGFWgFg")
-```
-
-Markdown syntax:
-
-![](https://www.youtube.com/watch?v=up8ODGFWgFg){width="90%"}
-
-
-You may need to push your updates to GitHub to see if the videos work.
-
-
-
-
-## Equations
-
-You might include equations if part of the purpose of your blog is to explain a statistical method. There are two ways to include equations:
-
-* Inline: $b \sim N(0, \sigma^2_b)$
-* Display-style (displayed on its own line): 
-$$\frac{\sigma^2_b}{\sigma^2_b + \sigma^2_e}$$
-
-For typesetting equations appropriately, check out the [AMS-LaTeX quick reference](https://github.com/manuelemacchia/math-latex/blob/master/amsmath.pdf) or take a look at the *Symbols in math mode* section of this  [cheat sheet](https://users.dickinson.edu/~richesod/latex/latexcheatsheet.pdf)  (or do some extra Googling---there are *many* resources).
 
 
 
 # Formatting
-
-## Tabbed subsections {.tabset}
-
-Each subsection below the "Tabbed subsections" section heading will appear in a tab. See R Markdown Cookbook [Section 7.6: Put content in tabs](https://bookdown.org/yihui/rmarkdown-cookbook/html-tabs.html) for additional customization options. 
-
-### Bulleted list
-
-You can make a bulleted list like this:
-
-* item 1
-* item 2
-* item 3
-
-
-### Numbered list
-
-
-You can make a numbered list like this
-
-1. First thing I want to say
-2. Second thing I want to say
-3. Third thing I want to say
 
 
 
