@@ -619,5 +619,7 @@ The Economic Benefits of Oil &amp; Gas - Department of Energy, www.energy.gov/ar
 
 Martin, Tillier. “America Produces Enough Oil to Meet Its Needs, so Why Do We Import Crude?” Nasdaq, www.nasdaq.com/articles/america-produces-enough-oil-to-meet-its-needs-so-why-do-we-import-crude#:~:text=That%20happens%20because%20of%20a,cheaper%20than%20domestically%2Dproduced%20crude. Accessed 12 Dec. 2023. 
 
+“PETROLEUM OTHER LIQUIDS.” Spot Prices for Crude Oil and Petroleum Products, www.eia.gov/dnav/pet/pet_pri_spt_s1_m.htm. Accessed 11 Dec. 2023. 
+
 With special thanks to OpenAI's ChatGPT.
 
