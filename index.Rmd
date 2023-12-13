@@ -201,8 +201,7 @@ word_counts <- combined_df |> #creates the counts, orders by descending
 
 ## Word Search
 
-To begin our analysis, we sought out articles relating to a series of key words that are relevant to our topic of interest (oil). These articles were found through using a few different key word searches such as: "Israel-Gaza Conflict", "Global Macroeconomic Environment", "Economic Impact of war" and "How war impacts national economies". After performing these searches, we selected articles that had recent publication dates. We took care to include articles from different institutions such as Governments/National Banks, News Media groups, and high ranking individuals in the private sector. 
-
+First, we employed two approaches of sentiment analysis on news articles to explore the impact of global conflict on oil. We sought out articles relating to a series of key words that are relevant to our topic of interest (oil). These articles were found through using a few different key word searches such as: "Israel-Gaza Conflict", "Global Macroeconomic Environment", "Economic Impact of war" and "How war impacts national economies". After performing these searches, we selected articles that had recent publication dates. We took care to include articles from different institutions such as Governments/National Banks, News Media groups, and high ranking individuals in the private sector. First, we explored the most used words across the articles.  
 ```{r fig.align="left", out.width="100%"}
 Visual1Data <- word_counts |>
   filter(count>25)
@@ -222,8 +221,118 @@ ggplot(data = Visual1Data, aes(x = fct_reorder(word, count), y = count, fill = c
 
 
 ```
-The output of this analysis gave us insight into the sentiment of the media, national governments, as well as the private sector. Obviously, an article from Bloomberg is going to be more likely to contain the words 'inflation' 'market' or 'economy' than an Emily Dickinson Poem, but seeing the other words that also appear in tandem with the aforementioned and viewing the output holistically still gives us a unique takeaway. That is: among all these economy related terms - oil is also a frequent. Thus, doing a deeper dive into how oil/energy fits into the macro environment has the potential to allow us to unearth new trends and make new discoveries. 
+The output of this analysis gave us insight into the sentiment of the media, national governments, as well as the private sector. Obviously, an article from Bloomberg is going to be more likely to contain the words 'inflation' 'market' or 'economy' than an Emily Dickinson Poem, but seeing the other words that also appear in tandem with the aforementioned and viewing the output holistically still gives us a unique takeaway. That is: among all these economy related terms - oil is also a frequent topic. To confirm these results, and explore hidden intricacies, our second approach employed OpenAI's ChatGPT ability to identify the key points in each article. 
 
+```{r fig.align="left", out.width="100%"}
+knitr::include_graphics("img/ChatGPTInstances.png")
+
+# HERE IS THE CODE TO CREATE THE ABOVE IMAGE. OUR API KEY IS STORED LOCALLY. TO REPRODUCE, PLEASE USE YOUR OWN KEY
+# 
+# api_key <-key_get("OpenAI")
+# 
+# api_url <- "https://api.openai.com/v1/chat/completions"
+# 
+# cnbc <- read_lines(file_path) |>
+#   paste(collapse = " ")
+# powell <- read_lines(file_path2) |>
+#   paste(collapse = " ")
+# barr <- read_lines(file_path3) |>
+#   paste(collapse = " ")
+# bloomberg <- read_lines(file_path4) |>
+#   paste(collapse = " ")
+# brooking <- read_lines(file_path5) |>
+#   paste(collapse = " ")
+# dod <- read_lines(file_path6) |>
+#   paste(collapse = " ")
+# cnn <- read_lines(file_path7) |>
+#   paste(collapse = " ")
+# jpm <- read_lines(file_path8) |>
+#   paste(collapse = " ")
+# nyt <- read_lines(file_path9) |>
+#   paste(collapse = " ")
+# goldman <- read_lines(file_path10) |>
+#   paste(collapse = " ")
+# 
+# articles <- c(cnbc, powell, barr, bloomberg, brooking, dod, cnn, jpm, nyt, goldman)
+# 
+# postGPT <-" "
+# 
+# for (inst in articles){
+#   body <- list(
+#       model = "gpt-3.5-turbo-1106",
+#       messages = list(
+#         list(role = "user", content = paste(inst, "\nwhat are the three most important 
+#                                             arguments of this article? be specific"))
+#     ),
+#       max_tokens = 150,  # Adjust as needed
+#       temperature = 0.2  # Adjust for creativity (0.0-1.0)
+#   )
+#     
+#   response <- POST(
+#       url = api_url,
+#       add_headers(`Authorization` = paste("Bearer", api_key)),
+#       content_type_json(),
+#       body = toJSON(body, auto_unbox = TRUE)
+#   )
+#   if (http_status(response)$category == "Success") {
+#       #result <- fromJSON(content(response, "text"))
+#       print(2)
+#       response_content <- httr::content(response, type = "text")
+#       result <- fromJSON(response_content)
+#       #result <- fromJSON(httr::content(response, type = "application/json"))  # Using explicit namespace
+#       print(1)
+#       # Extract the content of the assistant's message
+#       if (length(result$choices) > 0 && length(result$choices$message) > 0) {
+#         postGPT <- paste(postGPT, result$choices$message$content, sep = "\n")
+#       } else {
+#         print("No response generated.")
+#       }
+#   } else {
+#       print("Error in API request:")
+#     }
+# }
+# 
+# data(stop_words)
+# 
+# 
+# postGPT <- postGPT |>
+#   tolower() |>
+#   removePunctuation() |>
+#   stripWhitespace()
+# 
+# postW <- str_split(postGPT, "\\s+")[[1]]
+# 
+# 
+# stops <- c("potential", "1", "2", "3", "monetary", "article", " ", "economy", "economic", "growth") #gets rid of other random words we don't want included
+# cleanW <- removeWords(postW, stops)
+# cleanW <- table(cleanW)
+# word_freq_df <- as.data.frame(cleanW, stringsAsFactors=FALSE)
+# names(word_freq_df) <- c("word", "freq")
+# word_freq_df <- word_freq_df[order(-word_freq_df$freq),]
+# 
+# word_freq_df<- word_freq_df |>
+#     anti_join(stop_words, by="word") #removes stop words
+# 
+# 
+# Visual2Data <- word_freq_df |>
+#   filter(freq>3) |>
+#   filter(freq<20) 
+# 
+# ggplot(data = Visual2Data, aes(x = fct_reorder(word, freq), y = freq, fill = freq)) +
+#   geom_col() +
+#   coord_flip() +
+#   scale_fill_viridis_c() +
+#   guides(fill = "none") +
+#   labs(
+#     x = NULL,
+#     y = "Number of instances",
+#     title = "The Most Common Words with a ChatGPT-Filtered Analysis") + 
+#   theme_minimal()
+
+
+
+```
+ChatGPT summarized each article into 3 key points (~4 sentences, prompt: "what are the three most important arguments of this article? be specific"). These summaries were combined, and the word frequency analysis is shown above. Ideally, filtering sentiment with ChatGPT ensures we retain most important arguments of each article. It also normalizes for length, as each ChatGPT summary is comparable, while article length (and thus word frequency) may variate. This table confirms oil's relationship to global conflict and macro economic discussion. Thus, a deeper dive into how oil/energy fits into the macro environment could unearth new trends and make new discoveries. 
 
 ```{r}
 knitr::include_graphics("img/Jpowellspeech.webp")
@@ -345,7 +454,9 @@ combined_df %>%
         list(targets = c(2,3), searchable = FALSE, width=50)  
       )
     )
-  )
+  )  %>% 
+  formatRound(columns = c('Imports', 'Exports'), digits = 2)
+
 ```
 ## Oil Pricing 
 
@@ -508,4 +619,5 @@ The Economic Benefits of Oil &amp; Gas - Department of Energy, www.energy.gov/ar
 
 Martin, Tillier. “America Produces Enough Oil to Meet Its Needs, so Why Do We Import Crude?” Nasdaq, www.nasdaq.com/articles/america-produces-enough-oil-to-meet-its-needs-so-why-do-we-import-crude#:~:text=That%20happens%20because%20of%20a,cheaper%20than%20domestically%2Dproduced%20crude. Accessed 12 Dec. 2023. 
 
+With special thanks to OpenAI's ChatGPT.
 
