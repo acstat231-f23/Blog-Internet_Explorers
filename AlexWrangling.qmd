@@ -1,7 +1,7 @@
 ---
 title: "STAT 231 Blog Project Wrangling"
 author: "Ethan Van De Water, Maximo Gonzalez, Alex Nichols"
-date: "2023-11-27"
+date: "2023-12-13"
 format: pdf
 ---
 
@@ -394,7 +394,9 @@ ggplot(data = Visual2Data, aes(x = fct_reorder(word, freq), y = freq, fill = fre
   labs(
     x = NULL,
     y = "Number of instances",
-    title = "The most common words in the articles")
+    title = "The Most Common Words with a ChatGPT-Filtered Analysis") + 
+  theme_minimal()
+
 
 
 ```
